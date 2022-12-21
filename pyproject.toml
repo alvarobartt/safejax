@@ -14,7 +14,12 @@ classifiers = [
   "Programming Language :: Python :: Implementation :: CPython",
   "Programming Language :: Python :: Implementation :: PyPy",
 ]
-dependencies = []
+dependencies = [
+  "jaxlib~=0.3.25",
+  "jax~=0.3.25",
+  "flax~=0.6.2",
+  "safetensors~=0.2.5",
+]
 description = "Serialize JAX and Flax structures with `safetensors`"
 dynamic = ["version"]
 keywords = []
