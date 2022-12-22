@@ -1,8 +1,7 @@
 import pytest
-
 from flax.core.frozen_dict import FrozenDict
 
-from safejax.flax import serialize, deserialize
+from safejax.flax import deserialize, serialize
 
 
 @pytest.mark.usefixtures("single_layer_model", "single_layer_model_params")
