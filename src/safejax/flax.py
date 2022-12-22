@@ -33,14 +33,13 @@ def serialize(frozen_or_unfrozen_dict: Union[Dict[str, Any], FrozenDict]) -> byt
 
 def unflatten_frozen_dict(tensors: Dict[str, jnp.DeviceArray]) -> FrozenDict:
     """Idea from https://stackoverflow.com/a/63545677"""
-    res = {}
-    for k, v in tensors.items():
-        res_tmp = res
-        levels = k.split(".")
-        for level in levels[:-1]:
-            res_tmp = res_tmp.setdefault(level, {})
-        res_tmp[levels[-1]] = v
-    return freeze(res)
+    weights = {}
+    for key, value in tensors.items():
+        subkeys = key.split(".")
+        for subkey in subkeys[:-1]:
+            weights = weights.setdefault(subkey, {})
+        weights[subkeys[-1]] = value
+    return freeze(weights)
 
 
 def deserialize(data: bytes) -> FrozenDict:
