@@ -1,23 +1,9 @@
 from typing import Any, Dict, Union
 
-import jax
 import numpy as np
-from flax import linen as nn
 from flax.core.frozen_dict import FrozenDict, freeze
 from jax import numpy as jnp
 from safetensors.flax import load, save
-
-
-class SingleLayer(nn.Module):
-    @nn.compact
-    def __call__(self, x):
-        x = nn.Dense(features=1)(x)
-        return x
-
-
-model = SingleLayer()
-rng = jax.random.PRNGKey(0)
-params = model.init(rng, jnp.ones((1, 1)))
 
 
 def flatten_frozen_dict(
@@ -38,19 +24,11 @@ def flatten_frozen_dict(
     return weights
 
 
-expected_format = {
-    "params.Dense_0.kernel": jnp.DeviceArray,
-    "params.Dense_0.bias": jnp.DeviceArray,
-}
-
-flattened_dict = flatten_frozen_dict(frozen_or_unfrozen_dict=params)
-
-for key, value in expected_format.items():
-    assert key in flattened_dict.keys()
-    assert isinstance(flattened_dict[key], value)
-
-saved_dict = save(tensors=flattened_dict)
-loaded_dict = load(data=saved_dict)
+def serialize(frozen_or_unfrozen_dict: Union[Dict[str, Any], FrozenDict]) -> bytes:
+    flattened_dict = flatten_frozen_dict(
+        frozen_or_unfrozen_dict=frozen_or_unfrozen_dict
+    )
+    return save(tensors=flattened_dict)
 
 
 def unflatten_frozen_dict(tensors: Dict[str, jnp.DeviceArray]) -> FrozenDict:
@@ -65,5 +43,6 @@ def unflatten_frozen_dict(tensors: Dict[str, jnp.DeviceArray]) -> FrozenDict:
     return freeze(res)
 
 
-frozen_dict = unflatten_frozen_dict(tensors=loaded_dict)
-y = model.apply(frozen_dict, jnp.ones((1, 1)))
+def deserialize(data: bytes) -> FrozenDict:
+    loaded_dict = load(data=data)
+    return unflatten_frozen_dict(tensors=loaded_dict)
