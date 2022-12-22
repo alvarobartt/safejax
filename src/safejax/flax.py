@@ -23,7 +23,7 @@ params = model.init(rng, jnp.ones((1, 1)))
 def flatten_frozen_dict(
     frozen_or_unfrozen_dict: Union[Dict[str, Any], FrozenDict],
     key_prefix: Union[str, None] = None,
-) -> Dict[str, jnp.DeviceArray]:
+) -> Union[Dict[str, jnp.DeviceArray], Dict[str, np.ndarray]]:
     """Idea from https://gist.github.com/Narsil/d5b0d747e5c8c299eb6d82709e480e3d"""
     weights = {}
     for key, value in frozen_or_unfrozen_dict.items():
