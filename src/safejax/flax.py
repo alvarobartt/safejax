@@ -56,7 +56,7 @@ loaded_dict = load(data=saved_dict)
 def unflatten_frozen_dict(tensors: Dict[str, jnp.DeviceArray]) -> FrozenDict:
     """Idea from https://stackoverflow.com/a/63545677"""
     res = {}
-    for k, v in zip(tensors.keys(), tensors.values()):
+    for k, v in tensors.items():
         res_tmp = res
         levels = k.split(".")
         for level in levels[:-1]:
