@@ -2,6 +2,7 @@ import pytest
 from flax.core.frozen_dict import FrozenDict
 
 from safejax.flax import deserialize, serialize
+from safejax.typing import PathLike
 
 
 @pytest.mark.usefixtures("single_layer_model", "single_layer_model_params")
@@ -14,6 +15,18 @@ def test_serialize(single_layer_model_params: FrozenDict) -> None:
 @pytest.mark.usefixtures("single_layer_model", "single_layer_model_params")
 def test_deserialize(single_layer_model_params: FrozenDict) -> None:
     serialized = serialize(frozen_or_unfrozen_dict=single_layer_model_params)
-    deserialized = deserialize(data=serialized)
+    deserialized = deserialize(path_or_buf=serialized)
+    assert isinstance(deserialized, FrozenDict)
+    assert len(deserialized) > 0
+
+
+@pytest.mark.usefixtures("single_layer_model_params", "safetensors_file")
+def test_deserialize_from_file(
+    single_layer_model_params: FrozenDict, safetensors_file: PathLike
+) -> None:
+    _ = serialize(
+        frozen_or_unfrozen_dict=single_layer_model_params, filename=safetensors_file
+    )
+    deserialized = deserialize(path_or_buf=safetensors_file)
     assert isinstance(deserialized, FrozenDict)
     assert len(deserialized) > 0
