@@ -6,7 +6,7 @@ as the tensor storage format, instead of relying on `pickle`. For more details o
 
 ## 🛠️ Requirements & Installation
 
-`safejax` requires Python 3.7 or above, up until Python 3.11.
+`safejax` requires Python 3.7 or above
 
 ```bash
 pip install safejax --upgrade
