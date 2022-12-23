@@ -11,7 +11,8 @@ from safejax.typing import PathLike
 
 __all__ = ["serialize", "deserialize"]
 
-def flatten_frozen_dict(
+
+def flatten_dict(
     frozen_or_unfrozen_dict: Union[Dict[str, Any], FrozenDict],
     key_prefix: Union[str, None] = None,
 ) -> Union[Dict[str, jnp.DeviceArray], Dict[str, np.ndarray]]:
@@ -44,8 +45,7 @@ def serialize(
         return filename
 
 
-def unflatten_frozen_dict(tensors: Dict[str, jnp.DeviceArray]) -> FrozenDict:
-    """Idea from https://stackoverflow.com/a/63545677"""
+def unflatten_dict(tensors: Dict[str, jnp.DeviceArray]) -> FrozenDict:
     weights = {}
     for key, value in tensors.items():
         subkeys = key.split(".")
