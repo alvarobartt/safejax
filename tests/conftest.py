@@ -1,10 +1,10 @@
+from pathlib import Path
+
 import jax
 import jax.numpy as jnp
 import pytest
 from flax import linen as nn
 from flax.core.frozen_dict import FrozenDict
-
-from safejax.typing import PathLike
 
 
 class SingleLayerModel(nn.Module):
@@ -30,6 +30,6 @@ def single_layer_model_params(single_layer_model: nn.Module) -> FrozenDict:
 
 
 @pytest.fixture(scope="session")
-def safetensors_file(tmp_path_factory) -> PathLike:
+def safetensors_file(tmp_path_factory) -> Path:
     # https://docs.pytest.org/en/7.1.x/how-to/tmp_path.html#the-tmp-path-factory-fixture
-    return tmp_path_factory.mktemp("data") / "model.safetensors"
+    return Path(tmp_path_factory.mktemp("data") / "model.safetensors")
