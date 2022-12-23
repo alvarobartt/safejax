@@ -9,6 +9,7 @@ from safetensors.flax import load, load_file, save, save_file
 
 from safejax.typing import PathLike
 
+__all__ = ["serialize", "deserialize"]
 
 def flatten_frozen_dict(
     frozen_or_unfrozen_dict: Union[Dict[str, Any], FrozenDict],
