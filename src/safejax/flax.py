@@ -31,7 +31,7 @@ def flatten_frozen_dict(
 def serialize(
     frozen_or_unfrozen_dict: Union[Dict[str, Any], FrozenDict],
     filename: Union[PathLike, None] = None,
-) -> bytes:
+) -> Union[bytes, None]:
     # TODO(alvaro): handle the errors properly
     flattened_dict = flatten_frozen_dict(
         frozen_or_unfrozen_dict=frozen_or_unfrozen_dict
