@@ -1,4 +1,4 @@
-# 🧪 `safejax`
+# 🔐 `safejax`
 
 `safejax` is a Python package to serialize JAX and Flax models using `safetensors`
 as the tensor storage format, instead of relying on `pickle`. For more details on why
@@ -16,11 +16,11 @@ pip install safejax --upgrade
 
 ```python
 import jax
-
 from flax import linen as nn
-from flax.core.frozen_dict import FrozenDict
+from jax import numpy as jnp
 
-from safejax.flax import deserialize, serialize
+from safejax.flax import serialize
+
 
 class SingleLayerModel(nn.Module):
     features: int
@@ -29,6 +29,7 @@ class SingleLayerModel(nn.Module):
     def __call__(self, x):
         x = nn.Dense(features=self.features)(x)
         return x
+
 
 model = SingleLayerModel(features=1)
 
@@ -46,7 +47,7 @@ More examples can be found at [`examples/`](./examples).
 
 `safetensors` defines an easy and fast (zero-copy) format to store tensors,
 while `pickle` has some known weaknesses and security issues. `safetensors`
-is also a storage-format that is intended to be trivial to the framework
+is also a storage format that is intended to be trivial to the framework
 used to load the tensors. More in depth information can be found at 
 https://github.com/huggingface/safetensors.
 
@@ -60,4 +61,11 @@ more than tensors e.g. `FrozenDict`s, see their response at
 https://github.com/huggingface/safetensors/discussions/138.
 
 So `safejax` was created so as to easily provide a way to serialize `FrozenDict`s
-using `safetensors` as the tensor storage-format instead of `pickle`.
+using `safetensors` as the tensor storage format instead of `pickle`.
+
+### 📄 Main differences with `flax.serialization`
+
+* `flax.serialization.to_bytes` uses `pickle` as the tensor storage format, while
+`safejax.flax.serialize` uses `safetensors`
+* `flax.serialization.from_bytes` requires the `target` to be instantiated, while
+`safejax.flax.deserialize` just needs the encoded bytes
