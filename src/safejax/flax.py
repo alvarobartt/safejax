@@ -31,16 +31,16 @@ def flatten_frozen_dict(
 def serialize(
     frozen_or_unfrozen_dict: Union[Dict[str, Any], FrozenDict],
     filename: Union[PathLike, None] = None,
-) -> Union[bytes, None]:
+) -> Union[bytes, PathLike]:
     # TODO(alvaro): handle the errors properly
     flattened_dict = flatten_frozen_dict(
         frozen_or_unfrozen_dict=frozen_or_unfrozen_dict
     )
-    return (
-        save(tensors=flattened_dict)
-        if not filename
-        else save_file(tensors=flattened_dict, filename=filename)
-    )
+    if not filename:
+        return save(tensors=flattened_dict)
+    else:
+        save_file(tensors=flattened_dict, filename=filename)
+        return filename
 
 
 def unflatten_frozen_dict(tensors: Dict[str, jnp.DeviceArray]) -> FrozenDict:
