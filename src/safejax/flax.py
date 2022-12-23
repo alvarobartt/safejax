@@ -1,3 +1,5 @@
+import os
+from pathlib import Path
 from typing import Any, Dict, Union
 
 import numpy as np
@@ -56,6 +58,10 @@ def deserialize(path_or_buf: Union[PathLike, bytes]) -> FrozenDict:
     # TODO(alvaro): handle the errors properly
     if isinstance(path_or_buf, bytes):
         loaded_dict = load(data=path_or_buf)
-    if isinstance(path_or_buf, PathLike):
+    if (
+        isinstance(path_or_buf, str)
+        or isinstance(path_or_buf, Path)
+        or isinstance(path_or_buf, os.PathLike)
+    ):
         loaded_dict = load_file(filename=path_or_buf)
     return unflatten_frozen_dict(tensors=loaded_dict)
