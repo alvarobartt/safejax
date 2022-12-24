@@ -39,7 +39,7 @@ path = "src/safejax/__init__.py"
 [project.optional-dependencies]
 quality = [
   "black~=22.6.0",
-  "flake8~=4.0.1",
+  "ruff~=0.0.192",
   "isort~=5.10.1",
   "pre-commit~=2.20.0",
 ]
@@ -54,14 +54,33 @@ features = [
 
 [tool.hatch.envs.quality.scripts]
 check = [
-  "flake8 src tests",
+  "ruff src tests",
   "black --check --diff --preview src tests",
   "isort --check-only --diff src tests",
 ]
 format = [
   "isort src tests",
+  "ruff --fix src tests",
   "black --preview src tests",
   "check",
+]
+
+[tool.isort]
+profile = "black"
+
+[tool.ruff]
+select = [
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "F",  # pyflakes
+    "C",  # flake8-comprehensions
+    "B",  # flake8-bugbear
+]
+ignore = [
+    "E203",  # whitespace before ':'
+    "E501",  # line too long, handled by black
+    "B008",  # do not perform function calls in argument defaults
+    "C901",  # too complex
 ]
 
 [tool.hatch.envs.test]
@@ -74,9 +93,6 @@ run = "pytest tests/ --durations 0 -s"
 
 [[tool.hatch.envs.test.matrix]]
 python = ["37", "38", "39", "310"]
-
-[tool.isort]
-profile = "black"
 
 [tool.hatch.build.targets.sdist]
 exclude = [
