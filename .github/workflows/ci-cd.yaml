@@ -36,8 +36,8 @@ jobs:
 
       - name: check-quality
         run: |
-          ruff src tests
-          black --check --diff --preview src tests
+          ruff src tests benchmarks examples
+          black --check --diff --preview src tests benchmarks examples
 
   run-tests:
     needs: check-quality
