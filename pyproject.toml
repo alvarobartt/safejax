@@ -40,7 +40,6 @@ path = "src/safejax/__init__.py"
 quality = [
   "black~=22.10.0",
   "ruff~=0.0.192",
-  "isort~=5.10.1",
   "pre-commit~=2.20.0",
 ]
 tests = [
@@ -56,10 +55,8 @@ features = [
 check = [
   "ruff src tests",
   "black --check --diff --preview src tests",
-  "isort --check-only --diff src tests",
 ]
 format = [
-  "isort src tests",
   "ruff --fix src tests",
   "black --preview src tests",
   "check",
@@ -73,15 +70,18 @@ select = [
     "E",  # pycodestyle errors
     "W",  # pycodestyle warnings
     "F",  # pyflakes
+    "I",  # isort
     "C",  # flake8-comprehensions
     "B",  # flake8-bugbear
 ]
 ignore = [
-    "E203",  # whitespace before ':'
     "E501",  # line too long, handled by black
     "B008",  # do not perform function calls in argument defaults
     "C901",  # too complex
 ]
+
+[tool.ruff.isort]
+known-first-party = ["safejax"]
 
 [tool.hatch.envs.test]
 features = [
