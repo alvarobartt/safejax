@@ -1,6 +1,5 @@
 import jax
 from flax import linen as nn
-from flax.core.frozen_dict import FrozenDict
 from flax.serialization import from_bytes, to_bytes
 from jax import numpy as jnp
 
