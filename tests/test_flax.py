@@ -6,7 +6,7 @@ from flax.core.frozen_dict import FrozenDict
 from safejax.flax import deserialize, serialize
 
 
-@pytest.mark.usefixtures("single_layer_model", "single_layer_model_params")
+@pytest.mark.usefixtures("single_layer_model_params")
 def test_serialize(single_layer_model_params: FrozenDict) -> None:
     serialized = serialize(frozen_or_unfrozen_dict=single_layer_model_params)
     assert isinstance(serialized, bytes)
@@ -24,7 +24,7 @@ def test_serialize_to_file(
     assert safetensors_file.exists()
 
 
-@pytest.mark.usefixtures("single_layer_model", "single_layer_model_params")
+@pytest.mark.usefixtures("single_layer_model_params")
 def test_deserialize(single_layer_model_params: FrozenDict) -> None:
     serialized = serialize(frozen_or_unfrozen_dict=single_layer_model_params)
     deserialized = deserialize(path_or_buf=serialized)
