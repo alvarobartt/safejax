@@ -1,4 +1,4 @@
-# 🔐 `safejax`
+# 🔐 Serialize JAX/Flax models with `safetensors`
 
 `safejax` is a Python package to serialize JAX and Flax models using `safetensors`
 as the tensor storage format, instead of relying on `pickle`. For more details on why

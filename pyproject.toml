@@ -20,7 +20,7 @@ dependencies = [
   "flax~=0.6.2",
   "safetensors~=0.2.5",
 ]
-description = "Serialize JAX and Flax models with `safetensors`"
+description = "Serialize JAX/Flax models with `safetensors`"
 dynamic = ["version"]
 keywords = []
 license = "MIT"
