@@ -5,9 +5,10 @@ import jax.numpy as jnp
 import pytest
 from flax import linen as nn
 from flax.core.frozen_dict import FrozenDict
+from flaxmodels.resnet import ResNet50
 
 
-class SingleLayerModel(nn.Module):
+class SingleLayer(nn.Module):
     features: int
 
     @nn.compact
@@ -17,15 +18,27 @@ class SingleLayerModel(nn.Module):
 
 
 @pytest.fixture
-def single_layer_model() -> nn.Module:
-    return SingleLayerModel(features=1)
+def single_layer() -> nn.Module:
+    return SingleLayer(features=1)
 
 
 @pytest.fixture
-def single_layer_model_params(single_layer_model: nn.Module) -> FrozenDict:
+def single_layer_params(single_layer: nn.Module) -> FrozenDict:
     # https://docs.pytest.org/en/7.1.x/how-to/fixtures.html#fixtures-can-request-other-fixtures
     rng = jax.random.PRNGKey(0)
-    params = single_layer_model.init(rng, jnp.ones((1, 1)))
+    params = single_layer.init(rng, jnp.ones((1, 1)))
+    return params
+
+
+@pytest.fixture
+def resnet50() -> nn.Module:
+    return ResNet50()
+
+
+@pytest.fixture
+def resnet50_params(resnet50: nn.Module) -> FrozenDict:
+    rng = jax.random.PRNGKey(0)
+    params = resnet50.init(rng, jnp.ones((1, 224, 224, 3)))
     return params
 
 

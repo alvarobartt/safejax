@@ -13,7 +13,7 @@ __all__ = ["serialize", "deserialize"]
 
 
 def flatten_dict(
-    frozen_or_unfrozen_dict: Union[Dict[str, Any], FrozenDict],
+    params: Union[Dict[str, Any], FrozenDict],
     key_prefix: Union[str, None] = None,
 ) -> Union[Dict[str, jnp.DeviceArray], Dict[str, np.ndarray]]:
     """
@@ -27,25 +27,25 @@ def flatten_dict(
     Reference at https://gist.github.com/Narsil/d5b0d747e5c8c299eb6d82709e480e3d
 
     Args:
-        frozen_or_unfrozen_dict: A `FrozenDict` or a `Dict` containing the model parameters.
+        params: A `FrozenDict` or a `Dict` containing the model parameters.
         key_prefix: A prefix to prepend to the keys of the flattened dictionary.
 
     Returns:
         A flattened dictionary containing the model parameters.
     """
     weights = {}
-    for key, value in frozen_or_unfrozen_dict.items():
+    for key, value in params.items():
         key = f"{key_prefix}.{key}" if key_prefix else key
         if isinstance(value, jnp.DeviceArray) or isinstance(value, np.ndarray):
             weights[key] = value
             continue
         if isinstance(value, FrozenDict) or isinstance(value, Dict):
-            weights.update(flatten_dict(frozen_or_unfrozen_dict=value, key_prefix=key))
+            weights.update(flatten_dict(params=value, key_prefix=key))
     return weights
 
 
 def serialize(
-    frozen_or_unfrozen_dict: Union[Dict[str, Any], FrozenDict],
+    params: Union[Dict[str, Any], FrozenDict],
     filename: Union[PathLike, None] = None,
 ) -> Union[bytes, PathLike]:
     """
@@ -55,13 +55,13 @@ def serialize(
     otherwise the model is saved to the provided `filename` and the `filename` is returned.
 
     Args:
-        frozen_or_unfrozen_dict: A `FrozenDict` or a `Dict` containing the model parameters.
+        params: A `FrozenDict` or a `Dict` containing the model parameters.
         filename: The path to the file where the model will be saved.
 
     Returns:
         The serialized model as a `bytes` object or the path to the file where the model was saved.
     """
-    flattened_dict = flatten_dict(frozen_or_unfrozen_dict=frozen_or_unfrozen_dict)
+    flattened_dict = flatten_dict(params=params)
     if not filename:
         return save(tensors=flattened_dict)
     else:

@@ -36,6 +36,9 @@ Source = "https://github.com/alvarobartt/safejax"
 [tool.hatch.version]
 path = "src/safejax/__init__.py"
 
+[tool.hatch.metadata]
+allow-direct-references = true
+
 [project.optional-dependencies]
 quality = [
   "black~=22.10.0",
@@ -44,6 +47,8 @@ quality = [
 ]
 tests = [
   "pytest~=7.1.2",
+  "pytest-lazy-fixture~=0.6.3",
+  "flaxmodels @ git+https://github.com/matthias-wright/flaxmodels.git",
 ]
 
 [tool.hatch.envs.quality]
@@ -53,12 +58,12 @@ features = [
 
 [tool.hatch.envs.quality.scripts]
 check = [
-  "ruff src tests",
-  "black --check --diff --preview src tests",
+  "ruff src tests benchmarks examples",
+  "black --check --diff --preview src tests benchmarks examples",
 ]
 format = [
-  "ruff --fix src tests",
-  "black --preview src tests",
+  "ruff --fix src tests benchmarks examples",
+  "black --preview src tests benchmarks examples",
   "check",
 ]
 

@@ -20,7 +20,7 @@ model = SingleLayerModel(features=1)
 rng = jax.random.PRNGKey(0)
 params = model.init(rng, jnp.ones((1, 1)))
 
-serialized = serialize(frozen_or_unfrozen_dict=params)
+serialized = serialize(params=params)
 assert isinstance(serialized, bytes)
 assert len(serialized) > 0
 
