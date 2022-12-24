@@ -69,3 +69,29 @@ using `safetensors` as the tensor storage format instead of `pickle`.
 `safejax.flax.serialize` uses `safetensors`
 * `flax.serialization.from_bytes` requires the `target` to be instantiated, while
 `safejax.flax.deserialize` just needs the encoded bytes
+
+## 🏋🏼 Benchmark
+
+Benchmarks use [`hyperfine`](https://github.com/sharkdp/hyperfine) so it needs
+to be installed first.
+
+```bash
+$ hyperfine --warmup 2 "hatch run python benchmark.py benchmark_safejax" "hatch run python benchmark.py benchmark_flax"
+Benchmark 1: hatch run python benchmark.py benchmark_safejax
+  Time (mean ± σ):     671.3 ms ±   7.5 ms    [User: 2169.9 ms, System: 391.4 ms]
+  Range (min … max):   652.2 ms … 680.7 ms    10 runs
+ 
+Benchmark 2: hatch run python benchmark.py benchmark_flax
+  Time (mean ± σ):     676.0 ms ±  12.8 ms    [User: 2245.6 ms, System: 324.0 ms]
+  Range (min … max):   650.3 ms … 690.3 ms    10 runs
+ 
+Summary
+  'hatch run python benchmark.py benchmark_safejax' ran
+    1.01 ± 0.02 times faster than 'hatch run python benchmark.py benchmark_flax'
+```
+
+As we can see the difference is almost not noticeable, since the benchmark is using a 
+2-tensor dictionary, which should be faster using any method. The main difference is on
+the `safetensors` usage for the tensor storage instead of `pickle`.
+
+More in detailed and complex benchmarks will be prepared soon!
