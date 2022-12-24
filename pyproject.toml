@@ -14,8 +14,13 @@ classifiers = [
   "Programming Language :: Python :: Implementation :: CPython",
   "Programming Language :: Python :: Implementation :: PyPy",
 ]
-dependencies = []
-description = "Serialize JAX and Flax structures with `safetensors`"
+dependencies = [
+  "jaxlib~=0.3.25",
+  "jax~=0.3.25",
+  "flax~=0.6.2",
+  "safetensors~=0.2.5",
+]
+description = "Serialize JAX/Flax models with `safetensors`"
 dynamic = ["version"]
 keywords = []
 license = "MIT"
@@ -33,9 +38,8 @@ path = "src/safejax/__init__.py"
 
 [project.optional-dependencies]
 quality = [
-  "black~=22.6.0",
-  "flake8~=4.0.1",
-  "isort~=5.10.1",
+  "black~=22.10.0",
+  "ruff~=0.0.192",
   "pre-commit~=2.20.0",
 ]
 tests = [
@@ -43,34 +47,52 @@ tests = [
 ]
 
 [tool.hatch.envs.quality]
-dependencies = [
-  "safejax[quality]"
+features = [
+  "quality"
 ]
-detached = true
 
 [tool.hatch.envs.quality.scripts]
 check = [
-  "flake8 src tests",
+  "ruff src tests",
   "black --check --diff --preview src tests",
-  "isort --check-only --diff src tests",
 ]
 format = [
-  "isort src tests",
+  "ruff --fix src tests",
   "black --preview src tests",
   "check",
 ]
 
+[tool.isort]
+profile = "black"
+
+[tool.ruff]
+select = [
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "F",  # pyflakes
+    "I",  # isort
+    "C",  # flake8-comprehensions
+    "B",  # flake8-bugbear
+]
+ignore = [
+    "E501",  # line too long, handled by black
+    "B008",  # do not perform function calls in argument defaults
+    "C901",  # too complex
+]
+
+[tool.ruff.isort]
+known-first-party = ["safejax"]
+
 [tool.hatch.envs.test]
-dependencies = ["safejax[tests]"]
+features = [
+  "tests"
+]
 
 [tool.hatch.envs.test.scripts]
 run = "pytest tests/ --durations 0 -s"
 
 [[tool.hatch.envs.test.matrix]]
 python = ["37", "38", "39", "310"]
-
-[tool.isort]
-profile = "black"
 
 [tool.hatch.build.targets.sdist]
 exclude = [
