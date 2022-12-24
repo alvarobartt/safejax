@@ -8,7 +8,7 @@ from safejax.flax import deserialize, serialize
 
 @pytest.mark.usefixtures("single_layer_model_params")
 def test_serialize(single_layer_model_params: FrozenDict) -> None:
-    serialized = serialize(frozen_or_unfrozen_dict=single_layer_model_params)
+    serialized = serialize(params=single_layer_model_params)
     assert isinstance(serialized, bytes)
     assert len(serialized) > 0
 
@@ -18,7 +18,7 @@ def test_serialize_to_file(
     single_layer_model_params: FrozenDict, safetensors_file: Path
 ) -> None:
     safetensors_file = serialize(
-        frozen_or_unfrozen_dict=single_layer_model_params, filename=safetensors_file
+        params=single_layer_model_params, filename=safetensors_file
     )
     assert isinstance(safetensors_file, Path)
     assert safetensors_file.exists()
@@ -26,7 +26,7 @@ def test_serialize_to_file(
 
 @pytest.mark.usefixtures("single_layer_model_params")
 def test_deserialize(single_layer_model_params: FrozenDict) -> None:
-    serialized = serialize(frozen_or_unfrozen_dict=single_layer_model_params)
+    serialized = serialize(params=single_layer_model_params)
     deserialized = deserialize(path_or_buf=serialized)
     assert isinstance(deserialized, FrozenDict)
     assert len(deserialized) > 0
@@ -37,7 +37,7 @@ def test_deserialize_from_file(
     single_layer_model_params: FrozenDict, safetensors_file: Path
 ) -> None:
     safetensors_file = serialize(
-        frozen_or_unfrozen_dict=single_layer_model_params, filename=safetensors_file
+        params=single_layer_model_params, filename=safetensors_file
     )
     deserialized = deserialize(path_or_buf=safetensors_file)
     assert isinstance(deserialized, FrozenDict)
