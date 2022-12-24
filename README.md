@@ -72,27 +72,42 @@ using `safetensors` as the tensor storage format instead of `pickle`.
 
 ## 🏋🏼 Benchmark
 
-Benchmarks use [`hyperfine`](https://github.com/sharkdp/hyperfine) so it needs
-to be installed first, and the `hatch`/`pyenv` environment needs to be activated
-first (or just install the requirements).
+Benchmarks are no longer running with [`hyperfine`](https://github.com/sharkdp/hyperfine),
+as most of the elapsed time is not during the actual serialization but in the imports and
+in the model parameter initialization. So we've refactored those so as to run with pure
+Python code using `time.perf_counter` to measure the elapsed time in seconds.
 
 ```bash
-$ hyperfine --warmup 2 "python benchmark.py benchmark_safejax" "python benchmark.py benchmark_flax" 
-Benchmark 1: python benchmark.py benchmark_safejax
-  Time (mean ± σ):     539.6 ms ±  11.9 ms    [User: 1693.2 ms, System: 690.4 ms]
-  Range (min … max):   516.1 ms … 555.7 ms    10 runs
+$ python benchmarks/resnet50.py
+safejax (100 runs): 2.0974 s
+flax (100 runs): 4.8734 s
+```
+
+This means that for `ResNet50`, `safejax` is x2.3 times faster than `flax.serialization` when
+it comes to serialization, also to restate the fact that `safejax` stores the tensors with
+`safetensors` while `flax` saves those with `pickle`.
+
+But if we use [`hyperfine`](https://github.com/sharkdp/hyperfine) as mentioned above, it needs
+to be installed first, and the `hatch`/`pyenv` environment needs to be activated
+first (or just install the requirements). But, due to the overhead of the script, the 
+elapsed time during the serialization will be minimal compared to the rest, so the overall
+result won't reflect well enough the efficiency diff between both approaches, as above.
+
+```bash
+$ hyperfine --warmup 2 "python benchmarks/hyperfine/resnet50.py serialization_safejax" "python benchmarks/hyperfine/resnet50.py serialization_flax"
+Benchmark 1: python benchmarks/hyperfine/resnet50.py serialization_safejax
+  Time (mean ± σ):      1.778 s ±  0.038 s    [User: 3.345 s, System: 0.511 s]
+  Range (min … max):    1.741 s …  1.877 s    10 runs
  
-Benchmark 2: python benchmark.py benchmark_flax
-  Time (mean ± σ):     543.2 ms ±   5.6 ms    [User: 1659.6 ms, System: 748.9 ms]
-  Range (min … max):   532.0 ms … 551.5 ms    10 runs
+Benchmark 2: python benchmarks/hyperfine/resnet50.py serialization_flax
+  Time (mean ± σ):      1.790 s ±  0.011 s    [User: 3.371 s, System: 0.478 s]
+  Range (min … max):    1.771 s …  1.810 s    10 runs
  
 Summary
-  'python benchmark.py benchmark_safejax' ran
-    1.01 ± 0.02 times faster than 'python benchmark.py benchmark_flax'
+  'python benchmarks/hyperfine/resnet50.py serialization_safejax' ran
+    1.01 ± 0.02 times faster than 'python benchmarks/hyperfine/resnet50.py serialization_flax'
 ```
 
 As we can see the difference is almost not noticeable, since the benchmark is using a 
 2-tensor dictionary, which should be faster using any method. The main difference is on
 the `safetensors` usage for the tensor storage instead of `pickle`.
-
-More in detailed and complex benchmarks will be prepared soon!
