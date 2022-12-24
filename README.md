@@ -73,21 +73,22 @@ using `safetensors` as the tensor storage format instead of `pickle`.
 ## 🏋🏼 Benchmark
 
 Benchmarks use [`hyperfine`](https://github.com/sharkdp/hyperfine) so it needs
-to be installed first.
+to be installed first, and the `hatch`/`pyenv` environment needs to be activated
+first (or just install the requirements).
 
 ```bash
-$ hyperfine --warmup 2 "hatch run python benchmark.py benchmark_safejax" "hatch run python benchmark.py benchmark_flax"
-Benchmark 1: hatch run python benchmark.py benchmark_safejax
-  Time (mean ± σ):     671.3 ms ±   7.5 ms    [User: 2169.9 ms, System: 391.4 ms]
-  Range (min … max):   652.2 ms … 680.7 ms    10 runs
+$ hyperfine --warmup 2 "python benchmark.py benchmark_safejax" "python benchmark.py benchmark_flax" 
+Benchmark 1: python benchmark.py benchmark_safejax
+  Time (mean ± σ):     539.6 ms ±  11.9 ms    [User: 1693.2 ms, System: 690.4 ms]
+  Range (min … max):   516.1 ms … 555.7 ms    10 runs
  
-Benchmark 2: hatch run python benchmark.py benchmark_flax
-  Time (mean ± σ):     676.0 ms ±  12.8 ms    [User: 2245.6 ms, System: 324.0 ms]
-  Range (min … max):   650.3 ms … 690.3 ms    10 runs
+Benchmark 2: python benchmark.py benchmark_flax
+  Time (mean ± σ):     543.2 ms ±   5.6 ms    [User: 1659.6 ms, System: 748.9 ms]
+  Range (min … max):   532.0 ms … 551.5 ms    10 runs
  
 Summary
-  'hatch run python benchmark.py benchmark_safejax' ran
-    1.01 ± 0.02 times faster than 'hatch run python benchmark.py benchmark_flax'
+  'python benchmark.py benchmark_safejax' ran
+    1.01 ± 0.02 times faster than 'python benchmark.py benchmark_flax'
 ```
 
 As we can see the difference is almost not noticeable, since the benchmark is using a 
