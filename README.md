@@ -66,9 +66,9 @@ using `safetensors` as the tensor storage format instead of `pickle`.
 ### 📄 Main differences with `flax.serialization`
 
 * `flax.serialization.to_bytes` uses `pickle` as the tensor storage format, while
-`safejax.flax.serialize` uses `safetensors`
+`safejax.serialize` uses `safetensors`
 * `flax.serialization.from_bytes` requires the `target` to be instantiated, while
-`safejax.flax.deserialize` just needs the encoded bytes
+`safejax.deserialize` just needs the encoded bytes
 
 ## 🏋🏼 Benchmark
 
