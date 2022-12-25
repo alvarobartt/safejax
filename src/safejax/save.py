@@ -12,13 +12,13 @@ def serialize(
     filename: Union[PathLike, None] = None,
 ) -> Union[bytes, PathLike]:
     """
-    Serialize a Flax model from either a `FrozenDict` or a `Dict`.
+    Serialize a JAX/Flax/Haiku model params from either a `FrozenDict` or a `Dict`.
 
     If `filename` is not provided, the serialized model is returned as a `bytes` object,
     otherwise the model is saved to the provided `filename` and the `filename` is returned.
 
     Args:
-        params: A `FrozenDict` or a `Dict` containing the model parameters.
+        params: A `FrozenDict` or a `Dict` containing the model params.
         filename: The path to the file where the model will be saved.
 
     Returns:

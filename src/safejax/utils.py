@@ -6,11 +6,12 @@ from jax import numpy as jnp
 
 
 def flatten_dict(
-    params: Dict[str, Any],
+    params: Union[Dict[str, Any], FrozenDict],
     key_prefix: Union[str, None] = None,
 ) -> Dict[str, Any]:
     """
-    Flatten a `FrozenDict` or a `Dict` containing Flax model parameters.
+    Flatten a `FrozenDict` or a `Dict` containing either `jnp.DeviceArray` or
+    `np.ndarray` as values.
 
     Note:
         This function is recursive to explore all the nested dictionaries,
@@ -20,11 +21,11 @@ def flatten_dict(
     Reference at https://gist.github.com/Narsil/d5b0d747e5c8c299eb6d82709e480e3d
 
     Args:
-        params: A `FrozenDict` or a `Dict` containing the model parameters.
+        params: A `FrozenDict` or a `Dict` with the params to flatten.
         key_prefix: A prefix to prepend to the keys of the flattened dictionary.
 
     Returns:
-        A flattened dictionary containing the model parameters.
+        A `Dict` containing the flattened params.
     """
     flattened_params = {}
     for key, value in params.items():
@@ -44,15 +45,15 @@ def flatten_dict(
 
 def unflatten_dict(tensors: Dict[str, Any]) -> Dict[str, Any]:
     """
-    Unflatten a `FrozenDict` from a `Dict` of tensors.
+    Unflatten a `Dict` of tensors stored as a flattened dictionary.
 
     Reference at https://stackoverflow.com/a/63545677.
 
     Args:
-        tensors: A `Dict` of tensors containing the model parameters.
+        tensors: A `Dict` of tensors stored as a flattened dictionary.
 
     Returns:
-        A `FrozenDict` containing the model parameters.
+        An unflattened `Dict` of tensors.
     """
     params = {}
     for key, value in tensors.items():
