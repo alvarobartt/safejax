@@ -5,7 +5,7 @@ from flax.serialization import to_bytes
 from flaxmodels.resnet import ResNet50
 from jax import numpy as jnp
 
-from safejax.flax import serialize
+from safejax import serialize
 
 resnet50 = ResNet50()
 params = resnet50.init(jax.random.PRNGKey(42), jnp.ones((1, 224, 224, 3)))

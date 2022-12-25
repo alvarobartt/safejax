@@ -3,7 +3,7 @@ from flax import linen as nn
 from flax.core.frozen_dict import FrozenDict
 from jax import numpy as jnp
 
-from safejax.flax import deserialize, serialize
+from safejax import deserialize, serialize
 
 
 class SingleLayerModel(nn.Module):

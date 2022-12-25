@@ -19,7 +19,7 @@ import jax
 from flax import linen as nn
 from jax import numpy as jnp
 
-from safejax.flax import serialize
+from safejax import serialize
 
 
 class SingleLayerModel(nn.Module):
