@@ -1,6 +1,6 @@
-# 🔐 Serialize JAX/Flax models with `safetensors`
+# 🔐 Serialize JAX, Flax, or Haiku model params with `safetensors`
 
-`safejax` is a Python package to serialize JAX and Flax models using `safetensors`
+`safejax` is a Python package to serialize JAX, Flax, or Haiku model params using `safetensors`
 as the tensor storage format, instead of relying on `pickle`. For more details on why
 `safetensors` is safer than `pickle` please check https://github.com/huggingface/safetensors.
 
