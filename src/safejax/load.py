@@ -9,7 +9,9 @@ from safetensors.flax import load, load_file
 from safejax.typing import PathLike
 
 
-def unflatten_dict(tensors: Dict[str, jnp.DeviceArray]) -> FrozenDict:
+def unflatten_dict(
+    tensors: Dict[str, jnp.DeviceArray], freeze_dict: bool = False
+) -> FrozenDict:
     """
     Unflatten a `FrozenDict` from a `Dict` of tensors.
 
@@ -17,6 +19,7 @@ def unflatten_dict(tensors: Dict[str, jnp.DeviceArray]) -> FrozenDict:
 
     Args:
         tensors: A `Dict` of tensors containing the model parameters.
+        freeze_dict: Whether to freeze the `Dict` to be a `FrozenDict` or not.
 
     Returns:
         A `FrozenDict` containing the model parameters.
@@ -27,15 +30,18 @@ def unflatten_dict(tensors: Dict[str, jnp.DeviceArray]) -> FrozenDict:
         for subkey in subkeys[:-1]:
             params = params.setdefault(subkey, {})
         params[subkeys[-1]] = value
-    return freeze(params)
+    return freeze(params) if freeze_dict else params
 
 
-def deserialize(path_or_buf: Union[PathLike, bytes]) -> FrozenDict:
+def deserialize(
+    path_or_buf: Union[PathLike, bytes], freeze_dict: bool = False
+) -> FrozenDict:
     """
     Deserialize a Flax model from either a `bytes` object or a file path.
 
     Args:
         path_or_buf: A `bytes` object or a file path containing the serialized model.
+        freeze_dict: Whether to freeze the `Dict` to be a `FrozenDict` or not.
 
     Returns:
         A `FrozenDict` containing the model parameters.
@@ -48,4 +54,4 @@ def deserialize(path_or_buf: Union[PathLike, bytes]) -> FrozenDict:
         or isinstance(path_or_buf, os.PathLike)
     ):
         loaded_dict = load_file(filename=path_or_buf)
-    return unflatten_dict(tensors=loaded_dict)
+    return unflatten_dict(tensors=loaded_dict, freeze_dict=freeze_dict)

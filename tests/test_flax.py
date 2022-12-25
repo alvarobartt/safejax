@@ -42,7 +42,7 @@ def test_serialize_to_file(params: FrozenDict, safetensors_file: Path) -> None:
 )
 def test_deserialize(params: FrozenDict) -> None:
     serialized = serialize(params=params)
-    deserialized = deserialize(path_or_buf=serialized)
+    deserialized = deserialize(path_or_buf=serialized, freeze_dict=True)
     assert isinstance(deserialized, FrozenDict)
     assert len(deserialized) > 0
 
@@ -57,6 +57,6 @@ def test_deserialize(params: FrozenDict) -> None:
 @pytest.mark.usefixtures("safetensors_file")
 def test_deserialize_from_file(params: FrozenDict, safetensors_file: Path) -> None:
     safetensors_file = serialize(params=params, filename=safetensors_file)
-    deserialized = deserialize(path_or_buf=safetensors_file)
+    deserialized = deserialize(path_or_buf=safetensors_file, freeze_dict=True)
     assert isinstance(deserialized, FrozenDict)
     assert len(deserialized) > 0
