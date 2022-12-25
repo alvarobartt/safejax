@@ -26,10 +26,11 @@ def unflatten_dict(
     """
     params = {}
     for key, value in tensors.items():
+        params_tmp = params
         subkeys = key.split(".")
         for subkey in subkeys[:-1]:
-            params = params.setdefault(subkey, {})
-        params[subkeys[-1]] = value
+            params_tmp = params_tmp.setdefault(subkey, {})
+        params_tmp[subkeys[-1]] = value
     return freeze(params) if freeze_dict else params
 
 
