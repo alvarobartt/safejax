@@ -3,7 +3,7 @@ from pathlib import Path
 import pytest
 from flax.core.frozen_dict import FrozenDict
 
-from safejax.flax import deserialize, serialize
+from safejax import deserialize, serialize
 
 
 @pytest.mark.parametrize(
