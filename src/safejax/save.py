@@ -6,38 +6,7 @@ from jax import numpy as jnp
 from safetensors.flax import save, save_file
 
 from safejax.typing import PathLike
-
-
-def flatten_dict(
-    params: Union[Dict[str, Any], FrozenDict],
-    key_prefix: Union[str, None] = None,
-) -> Union[Dict[str, jnp.DeviceArray], Dict[str, np.ndarray]]:
-    """
-    Flatten a `FrozenDict` or a `Dict` containing Flax model parameters.
-
-    Note:
-        This function is recursive to explore all the nested dictionaries,
-        and the keys are being flattened using the `.` character. So that the
-        later de-nesting can be done using the `.` character as a separator.
-
-    Reference at https://gist.github.com/Narsil/d5b0d747e5c8c299eb6d82709e480e3d
-
-    Args:
-        params: A `FrozenDict` or a `Dict` containing the model parameters.
-        key_prefix: A prefix to prepend to the keys of the flattened dictionary.
-
-    Returns:
-        A flattened dictionary containing the model parameters.
-    """
-    flattened_params = {}
-    for key, value in params.items():
-        key = f"{key_prefix}.{key}" if key_prefix else key
-        if isinstance(value, jnp.DeviceArray) or isinstance(value, np.ndarray):
-            flattened_params[key] = value
-            continue
-        if isinstance(value, FrozenDict) or isinstance(value, Dict):
-            flattened_params.update(flatten_dict(params=value, key_prefix=key))
-    return flattened_params
+from safejax.utils import flatten_dict
 
 
 def serialize(
@@ -57,7 +26,9 @@ def serialize(
     Returns:
         The serialized model as a `bytes` object or the path to the file where the model was saved.
     """
-    flattened_dict = flatten_dict(params=params)
+    flattened_dict = flatten_dict(
+        params=params, supported_value_types=[jnp.DeviceArray, np.ndarray]
+    )
     if not filename:
         return save(tensors=flattened_dict)
     else:
