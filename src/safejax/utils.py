@@ -1,10 +1,13 @@
-from typing import Any, Dict, Sequence, Union
+from typing import Any, Dict, Union
+
+import numpy as np
+from flax.core.frozen_dict import FrozenDict
+from jax import numpy as jnp
 
 
 def flatten_dict(
     params: Dict[str, Any],
     key_prefix: Union[str, None] = None,
-    supported_value_types: Union[Sequence[Any], None] = None,
 ) -> Dict[str, Any]:
     """
     Flatten a `FrozenDict` or a `Dict` containing Flax model parameters.
@@ -26,18 +29,14 @@ def flatten_dict(
     flattened_params = {}
     for key, value in params.items():
         key = f"{key_prefix}.{key}" if key_prefix else key
-        if any(
-            isinstance(value, supported_value_type)
-            for supported_value_type in supported_value_types
-        ):
+        if isinstance(value, (jnp.DeviceArray, np.ndarray)):
             flattened_params[key] = value
             continue
-        if isinstance(value, Dict):
+        if isinstance(value, (Dict, FrozenDict)):
             flattened_params.update(
                 flatten_dict(
                     params=value,
                     key_prefix=key,
-                    supported_value_types=supported_value_types,
                 )
             )
     return flattened_params

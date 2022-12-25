@@ -1,8 +1,6 @@
 from typing import Any, Dict, Union
 
-import numpy as np
 from flax.core.frozen_dict import FrozenDict
-from jax import numpy as jnp
 from safetensors.flax import save, save_file
 
 from safejax.typing import PathLike
@@ -26,9 +24,7 @@ def serialize(
     Returns:
         The serialized model as a `bytes` object or the path to the file where the model was saved.
     """
-    flattened_dict = flatten_dict(
-        params=params, supported_value_types=[jnp.DeviceArray, np.ndarray]
-    )
+    flattened_dict = flatten_dict(params=params)
     if not filename:
         return save(tensors=flattened_dict)
     else:
