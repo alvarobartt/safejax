@@ -50,7 +50,7 @@ tests = [
 
 [tool.hatch.envs.quality]
 features = [
-  "quality"
+  "quality",
 ]
 
 [tool.hatch.envs.quality.scripts]
@@ -68,18 +68,18 @@ format = [
 profile = "black"
 
 [tool.ruff]
-select = [
-    "E",  # pycodestyle errors
-    "W",  # pycodestyle warnings
-    "F",  # pyflakes
-    "I",  # isort
-    "C",  # flake8-comprehensions
-    "B",  # flake8-bugbear
-]
 ignore = [
-    "E501",  # line too long, handled by black
-    "B008",  # do not perform function calls in argument defaults
-    "C901",  # too complex
+  "E501", # line too long, handled by black
+  "B008", # do not perform function calls in argument defaults
+  "C901", # too complex
+]
+select = [
+  "E", # pycodestyle errors
+  "W", # pycodestyle warnings
+  "F", # pyflakes
+  "I", # isort
+  "C", # flake8-comprehensions
+  "B", # flake8-bugbear
 ]
 
 [tool.ruff.isort]
@@ -87,7 +87,7 @@ known-first-party = ["safejax"]
 
 [tool.hatch.envs.test]
 features = [
-  "tests"
+  "tests",
 ]
 
 [tool.hatch.envs.test.scripts]
