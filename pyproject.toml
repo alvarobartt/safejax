@@ -42,7 +42,7 @@ docs = [
   "mkdocs~=1.4.0",
   "mkdocs-material~=8.5.4",
   "mkdocs-git-revision-date-localized-plugin~=1.1.0",
-  "mkdocstrings~=0.19.0",
+  "mkdocstrings[python]~=0.19.0",
 ]
 quality = [
   "black~=22.10.0",
