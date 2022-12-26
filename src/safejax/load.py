@@ -51,7 +51,7 @@ def deserialize(
     ):
         decoded_params = load_file(filename=path_or_buf)
     if requires_unflattening:
-        decoded_params = unflatten_dict(tensors=decoded_params)
+        decoded_params = unflatten_dict(params=decoded_params)
     if freeze_dict:
         return freeze(decoded_params)
     if to_var_collection:
