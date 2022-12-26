@@ -1,8 +1,16 @@
-# 🔐 Serialize JAX/Flax models with `safetensors`
+# 🔐 Serialize JAX, Flax, or Haiku model params with `safetensors`
 
-`safejax` is a Python package to serialize JAX and Flax models using `safetensors`
+`safejax` is a Python package to serialize JAX, Flax, or Haiku model params using `safetensors`
 as the tensor storage format, instead of relying on `pickle`. For more details on why
 `safetensors` is safer than `pickle` please check https://github.com/huggingface/safetensors.
+
+Note that `safejax` supports the serialization of `jax`, `flax`, and `dm-haiku` model
+parameters and has been tested with all those frameworks. Anyway, `objax` is still pending
+as the `VarCollection` that it uses internally to store the tensors in memory is restricted
+to another naming convention e.g. `(EfficientNet).stem(ConvBnAct).conv(Conv2d).w`
+instead of `params.stem.conv.w` because the first can be more useful when debugging,
+even though there's some built-in rename functionality to allow loading weights from
+other frameworks, but that's still WIP in `safejax`. 
 
 ## 🛠️ Requirements & Installation
 
@@ -14,12 +22,16 @@ pip install safejax --upgrade
 
 ## 💻 Usage
 
+Let's create a `flax` model using the Linen API and once initialized,
+we can save the model params with `safejax` (using `safetensors`
+storage format).
+
 ```python
 import jax
 from flax import linen as nn
 from jax import numpy as jnp
 
-from safejax.flax import serialize
+from safejax import serialize
 
 
 class SingleLayerModel(nn.Module):
@@ -36,20 +48,37 @@ model = SingleLayerModel(features=1)
 rng = jax.random.PRNGKey(0)
 params = model.init(rng, jnp.ones((1, 1)))
 
-serialized = serialize(params=params)
-assert isinstance(serialized, bytes)
-assert len(serialized) > 0
+serialized_params = serialize(params=params)
 ```
 
-More examples can be found at [`examples/`](./examples).
+Those params can be later loaded using `safejax.deserialize` and used
+to run the inference over the model using those weights.
+
+```python
+from safejax import deserialize
+
+params = deserialize(path_or_buf=serialized_params, freeze_dict=True)
+```
+
+And, finally, running the inference as:
+
+```python
+x = jnp.ones((1, 28, 28, 1))
+y = model.apply(params, x)
+```
+
+More in-detail examples can be found at [`examples/`](./examples) for both `flax` and `dm-haiku`.
 
 ## 🤔 Why `safejax`?
 
 `safetensors` defines an easy and fast (zero-copy) format to store tensors,
 while `pickle` has some known weaknesses and security issues. `safetensors`
 is also a storage format that is intended to be trivial to the framework
-used to load the tensors. More in depth information can be found at 
+used to load the tensors. More in-depth information can be found at 
 https://github.com/huggingface/safetensors.
+
+Both `jax` and `haiku` use `pytrees` to store the model parameters in memory, so
+it's a dictionary-like class containing nested `jnp.DeviceArray` tensors.
 
 `flax` defines a dictionary-like class named `FrozenDict` that is used to
 store the tensors in memory, it can be dumped either into `bytes` in `MessagePack`
@@ -60,21 +89,21 @@ there are no plans from HuggingFace to extend `safetensors` to support anything
 more than tensors e.g. `FrozenDict`s, see their response at
 https://github.com/huggingface/safetensors/discussions/138.
 
-So `safejax` was created so as to easily provide a way to serialize `FrozenDict`s
+So `safejax` was created to easily provide a way to serialize `FrozenDict`s
 using `safetensors` as the tensor storage format instead of `pickle`.
 
 ### 📄 Main differences with `flax.serialization`
 
 * `flax.serialization.to_bytes` uses `pickle` as the tensor storage format, while
-`safejax.flax.serialize` uses `safetensors`
+`safejax.serialize` uses `safetensors`
 * `flax.serialization.from_bytes` requires the `target` to be instantiated, while
-`safejax.flax.deserialize` just needs the encoded bytes
+`safejax.deserialize` just needs the encoded bytes
 
 ## 🏋🏼 Benchmark
 
 Benchmarks are no longer running with [`hyperfine`](https://github.com/sharkdp/hyperfine),
 as most of the elapsed time is not during the actual serialization but in the imports and
-in the model parameter initialization. So we've refactored those so as to run with pure
+the model parameter initialization. So we've refactored those to run with pure
 Python code using `time.perf_counter` to measure the elapsed time in seconds.
 
 ```bash

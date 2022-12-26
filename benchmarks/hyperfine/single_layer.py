@@ -5,7 +5,7 @@ import jax.numpy as jnp
 from flax import linen as nn
 from flax.serialization import to_bytes
 
-from safejax.flax import serialize
+from safejax import serialize
 
 
 class SingleLayerModel(nn.Module):
