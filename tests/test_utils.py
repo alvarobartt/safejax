@@ -52,7 +52,7 @@ from safejax.utils import flatten_dict, unflatten_dict
 def test_unflatten_dict(
     input_dict: Dict[str, Any], expected_output_dict: Dict[str, Any]
 ) -> None:
-    unflattened_dict = unflatten_dict(tensors=input_dict)
+    unflattened_dict = unflatten_dict(params=input_dict)
     assert unflattened_dict == expected_output_dict
 
 

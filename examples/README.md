@@ -128,3 +128,73 @@ using those weights.
 x = jnp.ones([1, 224, 224, 3])
 y, _ = network.apply(decoded_params, initial_state, x, is_training=False)
 ```
+
+## Objax - [`objax_ft_safejax.py`](./examples/objax_ft_safejax.py)
+
+To run this Python script you won't need to install anything else than
+`safejax`, as both `jax` and `objax` are installed as part of it.
+
+In this case, we'll be using one of the architectures defined in the model zoo
+of `objax` at [`objax/zoo`](https://github.com/google/objax/tree/master/objax/zoo),
+which is ResNet50. So first of all, let's initialize it:
+
+```python
+from objax.zoo.resnet_v2 import ResNet50
+
+model = ResNet50(in_channels=3, num_classes=1000)
+```
+
+Once initialized, we can already access the model params which in `objax` are stored
+in `model.vars()` and are of type `VarCollection` which is a dictionary-like class. So
+on, we can already serialize those using `safejax.serialize` and `safetensors` format
+instead of `pickle` which is the current recommended way, see https://objax.readthedocs.io/en/latest/advanced/io.html.
+
+```python
+from safejax import serialize
+
+encoded_bytes = serialize(params=model.vars())
+```
+
+Then we can just deserialize those params back using `safejax.deserialize`, and
+we'll end up getting the same `VarCollection` dictionary back. Note that we need
+to disable the unflattening with `requires_unflattening=False` as it's not required
+due to the way it's stored, and set `to_var_collection=True` to get a `VarCollection`
+instead of a `Dict[str, jnp.DeviceArray]`, even though it will work with a standard
+dict too.
+
+```python
+from safejax import deserialize
+
+decoded_params = deserialize(
+    encoded_bytes, requires_unflattening=False, to_var_collection=True
+)
+```
+
+Now, once decoded with `safejax.deserialize` we need to assign those key-value
+pais back to the `VarCollection` of the ResNet50 via assignment, as `.update` in
+`objax` has been redefined, see https://github.com/google/objax/blob/53b391bfa72dc59009c855d01b625049a35f5f1b/objax/variable.py#L311,
+and it's not consistent with the standard `dict.update` (already reported at
+https://github.com/google/objax/issues/254). So, instead, we need to loop over
+all the key-value pairs in the decoded params and assign those one by one to the
+`VarCollection` in `model.vars()`.
+
+```python
+for key, value in decoded_params.items():
+    if key not in model.vars():
+        print(f"Key {key} not in model.vars()! Skipping.")
+        continue
+    model.vars()[key].assign(value)
+```
+
+And, finally, we can run the inference over the model via the `__call__` method
+as the `.vars()` are already copied from the params resulting of `safejax.deserialize`.
+
+```python
+from jax import numpy as jnp
+
+x = jnp.ones((1, 3, 224, 224))
+y = model(x, training=False)
+```
+
+Note that we're setting the `training` flag to `False`, which is the standard way
+of running the inference over a pre-trained model in `objax`.
