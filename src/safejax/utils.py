@@ -3,6 +3,7 @@ from typing import Any, Dict, Union
 import numpy as np
 from flax.core.frozen_dict import FrozenDict
 from jax import numpy as jnp
+from objax.variable import BaseState, BaseVar
 
 
 def flatten_dict(
@@ -30,6 +31,8 @@ def flatten_dict(
     flattened_params = {}
     for key, value in params.items():
         key = f"{key_prefix}.{key}" if key_prefix else key
+        if isinstance(value, (BaseVar, BaseState)):
+            value = value.value
         if isinstance(value, (jnp.DeviceArray, np.ndarray)):
             flattened_params[key] = value
             continue

@@ -17,10 +17,11 @@ classifiers = [
 dependencies = [
   "jaxlib~=0.3.25",
   "jax~=0.3.25",
+  "objax~=1.6.0",
   "flax~=0.6.2",
   "safetensors~=0.2.5",
 ]
-description = "Serialize JAX, Flax, or Haiku model params with `safetensors`"
+description = "Serialize JAX, Flax, Haiku, or Objax model params with `safetensors`"
 dynamic = ["version"]
 keywords = []
 license = "MIT"
