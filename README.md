@@ -4,6 +4,14 @@
 as the tensor storage format, instead of relying on `pickle`. For more details on why
 `safetensors` is safer than `pickle` please check https://github.com/huggingface/safetensors.
 
+Note that `safejax` supports the serialization of `jax`, `flax`, and `dm-haiku` model
+parameters and has been tested with all those frameworks. Anyway, `objax` is still pending
+as the `VarCollection` that it uses internally to store the tensors in memory is restricted
+to another naming convention e.g. `(EfficientNet).stem(ConvBnAct).conv(Conv2d).w`
+instead of `params.stem.conv.w` because the first can be more useful when debugging,
+even though there's some built-in rename functionality to allow loading weights from
+other frameworks, but that's still WIP in `safejax`. 
+
 ## 🛠️ Requirements & Installation
 
 `safejax` requires Python 3.7 or above
@@ -13,6 +21,10 @@ pip install safejax --upgrade
 ```
 
 ## 💻 Usage
+
+Let's create a `flax` model using the Linen API and once initialized,
+we can save the model params with `safejax` (using `safetensors`
+storage format).
 
 ```python
 import jax
@@ -36,12 +48,26 @@ model = SingleLayerModel(features=1)
 rng = jax.random.PRNGKey(0)
 params = model.init(rng, jnp.ones((1, 1)))
 
-serialized = serialize(params=params)
-assert isinstance(serialized, bytes)
-assert len(serialized) > 0
+serialized_params = serialize(params=params)
 ```
 
-More examples can be found at [`examples/`](./examples).
+Those params can be later loaded using `safejax.deserialize` and used
+to run the inference over the model using those weights.
+
+```python
+from safejax import deserialize
+
+params = deserialize(path_or_buf=serialized_params, freeze_dict=True)
+```
+
+And, finally, running the inference as:
+
+```python
+x = jnp.ones((1, 28, 28, 1))
+y = model.apply(params, x)
+```
+
+More in-detail examples can be found at [`examples/`](./examples) for both `flax` and `dm-haiku`.
 
 ## 🤔 Why `safejax`?
 
@@ -50,6 +76,9 @@ while `pickle` has some known weaknesses and security issues. `safetensors`
 is also a storage format that is intended to be trivial to the framework
 used to load the tensors. More in depth information can be found at 
 https://github.com/huggingface/safetensors.
+
+Both `jax` and `haiku` use `pytrees` to store the model parameters in memory, so
+it's a dictionary-like class containing nested `jnp.DeviceArray` tensors.
 
 `flax` defines a dictionary-like class named `FrozenDict` that is used to
 store the tensors in memory, it can be dumped either into `bytes` in `MessagePack`
