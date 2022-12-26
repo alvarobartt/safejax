@@ -3,7 +3,7 @@ build-backend = "hatchling.build"
 requires = ["hatchling"]
 
 [project]
-authors = [{name = "Alvaro Bartolome"}]
+authors = [{name = "Alvaro Bartolome", email = "alvarobartt@yahoo.com"}]
 classifiers = [
   "Development Status :: 4 - Beta",
   "Programming Language :: Python",
