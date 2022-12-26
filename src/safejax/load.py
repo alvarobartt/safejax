@@ -1,13 +1,12 @@
 import os
 from pathlib import Path
-from typing import Dict, Union
+from typing import Union
 
-from flax.core.frozen_dict import FrozenDict, freeze
-from jax import numpy as jnp
+from flax.core.frozen_dict import freeze
 from objax.variable import VarCollection
 from safetensors.flax import load, load_file
 
-from safejax.typing import PathLike
+from safejax.typing import DictionaryLike, PathLike
 from safejax.utils import unflatten_dict
 
 
@@ -16,7 +15,7 @@ def deserialize(
     freeze_dict: bool = False,
     requires_unflattening: bool = True,
     to_var_collection: bool = False,
-) -> Union[FrozenDict, Dict[str, jnp.DeviceArray], VarCollection]:
+) -> DictionaryLike:
     """
     Deserialize JAX, Flax, Haiku, or Objax model params from either a `bytes` object or a file path,
     stored using `safetensors.flax.save_file` or directly saved using `safejax.save.serialize` with

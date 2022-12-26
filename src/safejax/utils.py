@@ -5,13 +5,15 @@ from flax.core.frozen_dict import FrozenDict
 from jax import numpy as jnp
 from objax.variable import BaseState, BaseVar
 
+from safejax.typing import DictionaryLike
+
 
 def flatten_dict(
-    params: Union[Dict[str, Any], FrozenDict],
+    params: DictionaryLike,
     key_prefix: Union[str, None] = None,
-) -> Dict[str, Any]:
+) -> Union[Dict[str, np.ndarray], Dict[str, jnp.DeviceArray]]:
     """
-    Flatten a `FrozenDict` or a `Dict` containing either `jnp.DeviceArray` or
+    Flatten a `Dict`, `FrozenDict`, or `VarCollection` containing either `jnp.DeviceArray` or
     `np.ndarray` as values.
 
     Note:
@@ -22,11 +24,11 @@ def flatten_dict(
     Reference at https://gist.github.com/Narsil/d5b0d747e5c8c299eb6d82709e480e3d
 
     Args:
-        params: A `FrozenDict` or a `Dict` with the params to flatten.
+        params: A `Dict`, `FrozenDict`, or `VarCollection` with the params to flatten.
         key_prefix: A prefix to prepend to the keys of the flattened dictionary.
 
     Returns:
-        A `Dict` containing the flattened params.
+        A `Dict` containing the flattened params as level-1 key-value pairs.
     """
     flattened_params = {}
     for key, value in params.items():

@@ -1,15 +1,13 @@
-from typing import Any, Dict, Union
+from typing import Union
 
-from flax.core.frozen_dict import FrozenDict
-from objax.variable import VarCollection
 from safetensors.flax import save, save_file
 
-from safejax.typing import PathLike
+from safejax.typing import DictionaryLike, PathLike
 from safejax.utils import flatten_dict
 
 
 def serialize(
-    params: Union[Dict[str, Any], FrozenDict, VarCollection],
+    params: DictionaryLike,
     filename: Union[PathLike, None] = None,
 ) -> Union[bytes, PathLike]:
     """
