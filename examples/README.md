@@ -9,10 +9,10 @@ model parameters, in opposition to the default way to store those, which uses
 To run this Python script you won't need to install anything else than
 `safejax`, as both `jax` and `flax` are installed as part of it.
 
-In this case a single one layer model will be created, as for now, `flax`
+In this case, a single-layer model will be created, for now, `flax`
 doesn't have any pre-defined architecture such as ResNet, but you can use
 [`flaxmodels`](https://github.com/matthias-wright/flaxmodels) for that, as
-defines some well-known architectures written in `flax`.
+it defines some well-known architectures written in `flax`.
 
 ```python
 import jax
@@ -28,7 +28,7 @@ class SingleLayerModel(nn.Module):
 ```
 
 Once the network has been defined, we can instantiate and initialize it,
-so as to retrieve the `params` out of the forward-pass performed during
+to retrieve the `params` out of the forward pass performed during
 `.init`.
 
 ```python
@@ -53,11 +53,11 @@ decoded_params = deserialize(path_or_buf=encoded_bytes, freeze_dict=True)
 ```
 
 As seen in the code above, we're using `freeze_dict=True` since its default
-value is False, as we want to freeze the dict with the params before actually
-returning it during `safejax.deserialize`, this basically transforms the `Dict`
+value is False, as we want to freeze the `dict` with the params before actually
+returning it during `safejax.deserialize`, this transforms the `Dict`
 into a `FrozenDict`.
 
-Finally, we can use those `decoded_params` so as to run a forward pass
+Finally, we can use those `decoded_params` to run a forward pass
 with the previously defined single-layer network.
 
 ```python
@@ -96,7 +96,7 @@ Some notes on the code above:
 * `haiku.nets.ResNet50.__call__` requires `is_training` as a mandatory parameter
 * It needs to be initialized with `hk.transform_with_state` as we want to preserve
 the state e.g. ExponentialMovingAverage in BatchNorm. More information at https://dm-haiku.readthedocs.io/en/latest/api.html#transform-with-state.
-* Using `hk.without_apply_rng` removes the `rng` arg in the `.apply` function. Mode information at https://dm-haiku.readthedocs.io/en/latest/api.html#without-apply-rng.
+* Using `hk.without_apply_rng` removes the `rng` arg in the `.apply` function. More information at https://dm-haiku.readthedocs.io/en/latest/api.html#without-apply-rng.
 
 Then we just initialize the network to retrieve both the `params` and the `state`,
 which again, are random.

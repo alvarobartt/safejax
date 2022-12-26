@@ -74,7 +74,7 @@ More in-detail examples can be found at [`examples/`](./examples) for both `flax
 `safetensors` defines an easy and fast (zero-copy) format to store tensors,
 while `pickle` has some known weaknesses and security issues. `safetensors`
 is also a storage format that is intended to be trivial to the framework
-used to load the tensors. More in depth information can be found at 
+used to load the tensors. More in-depth information can be found at 
 https://github.com/huggingface/safetensors.
 
 Both `jax` and `haiku` use `pytrees` to store the model parameters in memory, so
@@ -89,7 +89,7 @@ there are no plans from HuggingFace to extend `safetensors` to support anything
 more than tensors e.g. `FrozenDict`s, see their response at
 https://github.com/huggingface/safetensors/discussions/138.
 
-So `safejax` was created so as to easily provide a way to serialize `FrozenDict`s
+So `safejax` was created to easily provide a way to serialize `FrozenDict`s
 using `safetensors` as the tensor storage format instead of `pickle`.
 
 ### 📄 Main differences with `flax.serialization`
@@ -103,7 +103,7 @@ using `safetensors` as the tensor storage format instead of `pickle`.
 
 Benchmarks are no longer running with [`hyperfine`](https://github.com/sharkdp/hyperfine),
 as most of the elapsed time is not during the actual serialization but in the imports and
-in the model parameter initialization. So we've refactored those so as to run with pure
+the model parameter initialization. So we've refactored those to run with pure
 Python code using `time.perf_counter` to measure the elapsed time in seconds.
 
 ```bash
