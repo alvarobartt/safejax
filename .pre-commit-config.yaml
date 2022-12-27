@@ -7,7 +7,38 @@ repos:
         language_version: python3
 
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: 'v0.0.194'
+    rev: "v0.0.194"
     hooks:
       - id: ruff
         args: [--fix]
+
+  - repo: https://github.com/jazzband/pip-tools
+    rev: 6.12.0
+    hooks:
+      - id: pip-compile
+        files: requirements/requirements.txt
+        args: ["--output-file=requirements/requirements.txt", "pyproject.toml"]
+      - id: pip-compile
+        files: requirements/requirements-dev.txt
+        args:
+          [
+            "--extra=quality",
+            "--output-file=requirements/requirements-dev.txt",
+            "pyproject.toml",
+          ]
+      - id: pip-compile
+        files: requirements/requirements-test.txt
+        args:
+          [
+            "--extra=test",
+            "--output-file=requirements/requirements-test.txt",
+            "pyproject.toml",
+          ]
+      - id: pip-compile
+        files: requirements/requirements-docs.txt
+        args:
+          [
+            "--extra=docs",
+            "--output-file=requirements/requirements-docs.txt",
+            "pyproject.toml",
+          ]
