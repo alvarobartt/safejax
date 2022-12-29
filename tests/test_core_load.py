@@ -10,7 +10,7 @@ from safejax import deserialize, serialize
     "params",
     [
         pytest.lazy_fixture("single_layer_params"),
-        pytest.lazy_fixture("resnet50_params"),
+        pytest.lazy_fixture("flax_resnet50_params"),
     ],
 )
 def test_deserialize(params: FrozenDict) -> None:
@@ -24,7 +24,7 @@ def test_deserialize(params: FrozenDict) -> None:
     "params",
     [
         pytest.lazy_fixture("single_layer_params"),
-        pytest.lazy_fixture("resnet50_params"),
+        pytest.lazy_fixture("flax_resnet50_params"),
     ],
 )
 @pytest.mark.usefixtures("safetensors_file")
