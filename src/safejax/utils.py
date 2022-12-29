@@ -5,16 +5,16 @@ from flax.core.frozen_dict import FrozenDict
 from jax import numpy as jnp
 from objax.variable import BaseState, BaseVar
 
-from safejax.typing import DictionaryLike
+from safejax.typing import ParamsDictLike
 
 
 def flatten_dict(
-    params: DictionaryLike,
+    params: ParamsDictLike,
     key_prefix: Union[str, None] = None,
 ) -> Union[Dict[str, np.ndarray], Dict[str, jnp.DeviceArray]]:
     """
-    Flatten a `Dict`, `FrozenDict`, or `VarCollection` containing either `jnp.DeviceArray` or
-    `np.ndarray` as values.
+    Flatten a `Dict`, `FrozenDict`, or `VarCollection`, for more detailed information on
+    the supported input types check `safejax.typing.ParamsDictLike`.
 
     Note:
         This function is recursive to explore all the nested dictionaries,
