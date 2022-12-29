@@ -11,8 +11,11 @@ classifiers = [
   "Programming Language :: Python :: 3.8",
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
-  "Programming Language :: Python :: Implementation :: CPython",
-  "Programming Language :: Python :: Implementation :: PyPy",
+  "Programming Language :: Python :: 3.11",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Science/Research",
+  "Topic :: Software Development :: Libraries",
+  "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 dependencies = [
   "jaxlib~=0.3.25",
@@ -121,7 +124,6 @@ serve = [
 exclude = [
   "/.github",
   "/docs",
-  "/.devcontainer",
   "/.pre-commit-config.yaml",
   "/.gitignore",
   "/tests",
