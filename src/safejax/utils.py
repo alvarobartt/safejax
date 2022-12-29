@@ -48,6 +48,9 @@ def flatten_dict(
     return flattened_params
 
 
+# Note that this function has a less restrictive type hint than the `flatten_dict` function.
+# This is because the `unflatten_dict` function is generic, and it can be used to unflatten
+# any `Dict` where the keys are expanded using the `.` character as a separator.
 def unflatten_dict(params: Dict[str, Any]) -> Dict[str, Any]:
     """
     Unflatten a `Dict` where the keys should be expanded using the `.` character
