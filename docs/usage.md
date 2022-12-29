@@ -117,4 +117,5 @@
 
 ---
 
-More in-detail examples can be found at [`examples/`](./examples) for `flax`, `dm-haiku`, and `objax`.
+More in-detail examples can be found at [`examples/`](https://github.com/alvarobartt/safejax/examples)
+for `flax`, `dm-haiku`, and `objax`.
