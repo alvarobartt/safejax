@@ -115,7 +115,27 @@
   model(...)
   ```
 
+* Convert `params` to `bytes` in `params.safetensors` and assign during deserialization
+
+  ```python
+  from safejax.objax import serialize, deserialize_with_assignment
+
+  params = model.vars()
+
+  encoded_bytes = serialize(params=params, filename="./params.safetensors")
+  deserialize_with_assignment(filename="./params.safetensors", model_vars=params)
+
+  model(...)
+  ```
+
 ---
+
+📌 As you may have seen in the examples above, most of those codeblocks are imporing both
+`serialize` and `deserialize` from `safejax`, but as some of those expect params with respect
+to the JAX framework that we're using, we can just import those from their files to avoid 
+defining the params over and over e.g. instead of `from safejax import deserialize, serialize`,
+we can just import `from safejax.flax import deserialize, serialize`, and skip the function 
+params, so that the only input param that we need to provide are the params themselves.
 
 More in-detail examples can be found at [`examples/`](https://github.com/alvarobartt/safejax/examples)
 for `flax`, `dm-haiku`, and `objax`.
