@@ -12,18 +12,15 @@ from objax.variable import VarCollection
 from objax.zoo.resnet_v2 import ResNet50 as ObjaxResNet50
 
 
-class SingleLayer(nn.Module):
-    features: int
-
-    @nn.compact
-    def __call__(self, x):
-        x = nn.Dense(features=self.features)(x)
-        return x
-
-
 @pytest.fixture
 def single_layer() -> nn.Module:
-    return SingleLayer(features=1)
+    class SingleLayer(nn.Module):
+        @nn.compact
+        def __call__(self, x):
+            x = nn.Dense(features=1)(x)
+            return x
+
+    return SingleLayer()
 
 
 @pytest.fixture
@@ -32,6 +29,21 @@ def single_layer_params(single_layer: nn.Module) -> FrozenDict:
     rng = jax.random.PRNGKey(0)
     params = single_layer.init(rng, jnp.ones((1, 1)))
     return params
+
+
+@pytest.fixture
+def objax_single_layer() -> objax.nn.Sequential:
+    return objax.nn.Sequential(
+        [
+            objax.nn.Linear(1, 1),
+        ]
+    )
+
+
+@pytest.fixture
+def objax_single_layer_params(objax_single_layer: objax.nn.Sequential) -> VarCollection:
+    # https://docs.pytest.org/en/7.1.x/how-to/fixtures.html#fixtures-can-request-other-fixtures
+    return objax_single_layer.vars()
 
 
 @pytest.fixture

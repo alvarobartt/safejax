@@ -20,6 +20,7 @@ def test_serialize_and_deserialize(params: HaikuParams) -> None:
     decoded_params = deserialize(path_or_buf=encoded_params)
     assert isinstance(decoded_params, dict)
     assert len(decoded_params) > 0
+    assert id(decoded_params) != id(params)
     assert decoded_params.keys() == params.keys()
 
 
@@ -40,4 +41,5 @@ def test_serialize_and_deserialize_from_file(
     decoded_params = deserialize(path_or_buf=safetensors_file)
     assert isinstance(decoded_params, dict)
     assert len(decoded_params) > 0
+    assert id(decoded_params) != id(params)
     assert decoded_params.keys() == params.keys()

@@ -41,6 +41,7 @@ def test_deserialize(
     decoded_params = deserialize(path_or_buf=encoded_params, **deserialize_kwargs)
     assert isinstance(decoded_params, expected_output_type)
     assert len(decoded_params) > 0
+    assert id(decoded_params) != id(params)
     assert decoded_params.keys() == params.keys()
 
 
@@ -77,4 +78,5 @@ def test_deserialize_from_file(
     decoded_params = deserialize(path_or_buf=safetensors_file, **deserialize_kwargs)
     assert isinstance(decoded_params, expected_output_type)
     assert len(decoded_params) > 0
+    assert id(decoded_params) != id(params)
     assert decoded_params.keys() == params.keys()
