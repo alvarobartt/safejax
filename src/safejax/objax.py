@@ -29,4 +29,4 @@ def deserialize_with_assignment(
         for k in f.keys():
             if k not in model_vars.keys():
                 raise ValueError(f"Variable with name {k} not found in model_vars.")
-            model_vars.vars()[k].assign(f.get_tensor(k))
+            model_vars[k].assign(f.get_tensor(k))
