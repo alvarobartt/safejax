@@ -103,7 +103,7 @@ features = [
 ]
 
 [tool.hatch.envs.test.scripts]
-run = "pytest tests/ --durations 0 -s"
+run = "pytest -s --durations 0 --disable-warnings"
 
 [[tool.hatch.envs.test.matrix]]
 python = ["37", "38", "39", "310"]
