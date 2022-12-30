@@ -14,9 +14,23 @@ from safejax.typing import PathLike
 deserialize = partial(deserialize, requires_unflattening=False, to_var_collection=True)
 
 
-def deserialize_with_assignment(
-    filename: PathLike, model_vars: VarCollection
-) -> VarCollection:
+# When calling `deserialize` over an `objax.variable.VarCollection` object, those variables cannot
+# be used directly for the inference, as the forward pass in `objax` is done through `__call__`, which
+# implies that the class instance must contain the model params loaded in `.vars` attribute. So this
+# function has been created in order to ease the parameter loading for `objax`, since as opposed to
+# `flax` and `haiku`, the model params are not provided on every forward pass.
+def deserialize_with_assignment(filename: PathLike, model_vars: VarCollection) -> None:
+    """Deserialize a `VarCollection` from a file and assign it to a `VarCollection` object.
+
+    Args:
+        filename: Path to the file containing the serialized `VarCollection` as a `Dict[str, jnp.DeviceArray]`.
+        model_vars: `VarCollection` object to which the deserialized tensors will be assigned.
+
+    Returns:
+        `None`, as the deserialized tensors are assigned to the `model_vars` object. So you
+        just need to access `model_vars`, or the actual `model.vars()` attribute, since the
+        assignment is done over a class attribute named `vars`.
+    """
     if not isinstance(filename, (str, Path)):
         raise ValueError(
             "`filename` must be a `str` or a `pathlib.Path` object, not"
