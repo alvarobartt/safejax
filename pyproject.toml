@@ -11,14 +11,18 @@ classifiers = [
   "Programming Language :: Python :: 3.8",
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
-  "Programming Language :: Python :: Implementation :: CPython",
-  "Programming Language :: Python :: Implementation :: PyPy",
+  "Programming Language :: Python :: 3.11",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Science/Research",
+  "Topic :: Software Development :: Libraries",
+  "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 dependencies = [
   "jaxlib~=0.3.25",
   "jax~=0.3.25",
   "objax~=1.6.0",
   "flax~=0.6.2",
+  "dm-haiku~=0.0.9",
   "safetensors~=0.2.5",
 ]
 description = "Serialize JAX, Flax, Haiku, or Objax model params with `safetensors`"
@@ -99,7 +103,7 @@ features = [
 ]
 
 [tool.hatch.envs.test.scripts]
-run = "pytest tests/ --durations 0 -s"
+run = "pytest -s --durations 0 --disable-warnings"
 
 [[tool.hatch.envs.test.matrix]]
 python = ["37", "38", "39", "310"]
@@ -121,7 +125,6 @@ serve = [
 exclude = [
   "/.github",
   "/docs",
-  "/.devcontainer",
   "/.pre-commit-config.yaml",
   "/.gitignore",
   "/tests",

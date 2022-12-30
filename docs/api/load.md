@@ -1,2 +1,0 @@
-::: safejax.load
-    handler: python

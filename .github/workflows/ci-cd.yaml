@@ -59,7 +59,7 @@ jobs:
           pip install ".[tests]"
 
       - name: run-tests
-        run: pytest tests/ -s --durations 0
+        run: pytest tests/ -s --durations 0 --disable-warnings
 
   deploy-docs:
     needs: run-tests

@@ -2,12 +2,12 @@
 
 `safejax` is a Python package to serialize JAX, Flax, Haiku, or Objax model params using `safetensors`
 as the tensor storage format, instead of relying on `pickle`. For more details on why
-`safetensors` is safer than `pickle` please check [huggingface/tensors](https://github.com/huggingface/safetensors).
+`safetensors` is safer than `pickle` please check [huggingface/safetensors](https://github.com/huggingface/safetensors).
 
 Note that `safejax` supports the serialization of `jax`, `flax`, `dm-haiku`, and `objax` model
 parameters and has been tested with all those frameworks, but there may be some cases where it
 does not work as expected, as this is still in an early development phase, so please if you have
-any feedback or bug reports, please open an issue at [safejax/issues](https://github.com/alvarobartt/safejax/issues).
+any feedback or bug reports, open an issue at [safejax/issues](https://github.com/alvarobartt/safejax/issues).
 
 ## 🛠️ Requirements & Installation
 
@@ -134,7 +134,27 @@ pip install safejax --upgrade
   model(...)
   ```
 
+* Convert `params` to `bytes` in `params.safetensors` and assign during deserialization
+
+  ```python
+  from safejax.objax import serialize, deserialize_with_assignment
+
+  params = model.vars()
+
+  encoded_bytes = serialize(params=params, filename="./params.safetensors")
+  deserialize_with_assignment(filename="./params.safetensors", model_vars=params)
+
+  model(...)
+  ```
+
 ---
+
+📌 As you may have seen in the examples above, most of those codeblocks are imporing both
+`serialize` and `deserialize` from `safejax`, but as some of those expect params with respect
+to the JAX framework that we're using, we can just import those from their files to avoid 
+defining the params over and over e.g. instead of `from safejax import deserialize, serialize`,
+we can just import `from safejax.flax import deserialize, serialize`, and skip the function 
+params, so that the only input param that we need to provide are the params themselves.
 
 More in-detail examples can be found at [`examples/`](./examples) for `flax`, `dm-haiku`, and `objax`.
 
@@ -144,25 +164,33 @@ More in-detail examples can be found at [`examples/`](./examples) for `flax`, `d
 while `pickle` has some known weaknesses and security issues. `safetensors`
 is also a storage format that is intended to be trivial to the framework
 used to load the tensors. More in-depth information can be found at 
-https://github.com/huggingface/safetensors.
+[huggingface/safetensors](https://github.com/huggingface/safetensors).
 
-Both `jax` and `haiku` use `pytrees` to store the model parameters in memory, so
+`jax` uses `pytrees` to store the model parameters in memory, so
 it's a dictionary-like class containing nested `jnp.DeviceArray` tensors.
 
-Then `objax` defines a custom dictionary-like class named `VarCollection` that contains
+`dm-haiku` uses a custom dictionary formatted as `<level_1>/~/<level_2>`, where the
+levels are the ones that define the tree structure and `/~/` is the separator between those
+e.g. `res_net50/~/intial_conv`, and that key does not contain a `jnp.DeviceArray`, but a 
+dictionary with key value pairs e.g. for both weights as `w` and biases as `b`.
+
+`objax` defines a custom dictionary-like class named `VarCollection` that contains
 some variables inheriting from `BaseVar` which is another custom `objax` type.
 
 `flax` defines a dictionary-like class named `FrozenDict` that is used to
 store the tensors in memory, it can be dumped either into `bytes` in `MessagePack`
 format or as a `state_dict`.
 
-Anyway, `flax` still uses `pickle` as the format for storing the tensors, so 
-there are no plans from HuggingFace to extend `safetensors` to support anything
-more than tensors e.g. `FrozenDict`s, see their response at
-https://github.com/huggingface/safetensors/discussions/138.
+Of all those, `flax` is the only framework that defines its custom functions to
+serialize and deserialize the model params under `flax.serialization`.But `flax` still
+uses `pickle` as the format for storing the tensors, and there are no plans from HuggingFace
+to extend `safetensors` to support anything more than tensors e.g. `FrozenDict`s, see their
+response at [huggingface/safetensors/discussions/138](https://github.com/huggingface/safetensors/discussions/138).
 
-So `safejax` was created to easily provide a way to serialize `FrozenDict`s
-using `safetensors` as the tensor storage format instead of `pickle`.
+So the motivation to create `safejax` is to easily provide a way to serialize `FrozenDict`s
+using `safetensors` as the tensor storage format instead of `pickle`, as well as to provide
+a common and easy way to serialize and deserialize any JAX model params (Flax, Haiku, or Objax)
+using `safetensors` format.
 
 ### 📄 Main differences with `flax.serialization`
 

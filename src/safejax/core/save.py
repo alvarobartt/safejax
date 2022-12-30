@@ -1,13 +1,14 @@
+from pathlib import Path
 from typing import Union
 
 from safetensors.flax import save, save_file
 
-from safejax.typing import DictionaryLike, PathLike
+from safejax.typing import ParamsDictLike, PathLike
 from safejax.utils import flatten_dict
 
 
 def serialize(
-    params: DictionaryLike,
+    params: ParamsDictLike,
     filename: Union[PathLike, None] = None,
 ) -> Union[bytes, PathLike]:
     """
@@ -24,7 +25,17 @@ def serialize(
         The serialized model params as a `bytes` object or the path to the file where the model params were saved.
     """
     params = flatten_dict(params=params)
+
     if filename:
-        save_file(tensors=params, filename=filename)
+        if not isinstance(filename, (str, Path)):
+            raise ValueError(
+                "If `filename` is provided (not `None`), it must be a `str` or a"
+                f" `pathlib.Path` object, not {type(filename)}."
+            )
+        filename = filename if isinstance(filename, Path) else Path(filename)
+        if not filename.exists or not filename.is_file:
+            raise ValueError(f"`filename` must be a valid file path, not {filename}.")
+        save_file(tensors=params, filename=filename.as_posix())
         return filename
+
     return save(tensors=params)

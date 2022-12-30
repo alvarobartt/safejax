@@ -54,6 +54,7 @@ nav:
   - Why safejax?: why_safejax.md
   - Examples: examples.md
   - Reference:
-      - safejax.load: api/load.md
-      - safejax.save: api/save.md
+      - safejax.core.load: api/core_load.md
+      - safejax.core.save: api/core_save.md
+      - safejax.utils: api/utils.md
   - License: license.md
