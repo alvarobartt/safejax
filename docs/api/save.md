@@ -1,2 +1,0 @@
-::: safejax.save
-    handler: python
