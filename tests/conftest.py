@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import fsspec
 import haiku as hk
 import jax
 import jax.numpy as jnp
@@ -8,6 +9,7 @@ import pytest
 from flax import linen as nn
 from flax.core.frozen_dict import FrozenDict
 from flaxmodels.resnet import ResNet50 as FlaxResNet50
+from fsspec.spec import AbstractFileSystem
 from objax.variable import VarCollection
 from objax.zoo.resnet_v2 import ResNet50 as ObjaxResNet50
 
@@ -93,3 +95,8 @@ def safetensors_file(tmp_path_factory) -> Path:
 @pytest.fixture(scope="session")
 def msgpack_file(tmp_path_factory) -> Path:
     return Path(tmp_path_factory.mktemp("data") / "params.msgpack")
+
+
+@pytest.fixture
+def fs() -> AbstractFileSystem:
+    return fsspec.filesystem("file")
