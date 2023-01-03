@@ -13,7 +13,7 @@ from objax.zoo.resnet_v2 import ResNet50 as ObjaxResNet50
 
 
 @pytest.fixture
-def single_layer() -> nn.Module:
+def flax_single_layer() -> nn.Module:
     class SingleLayer(nn.Module):
         @nn.compact
         def __call__(self, x):
@@ -24,10 +24,10 @@ def single_layer() -> nn.Module:
 
 
 @pytest.fixture
-def single_layer_params(single_layer: nn.Module) -> FrozenDict:
+def flax_single_layer_params(flax_single_layer: nn.Module) -> FrozenDict:
     # https://docs.pytest.org/en/7.1.x/how-to/fixtures.html#fixtures-can-request-other-fixtures
     rng = jax.random.PRNGKey(0)
-    params = single_layer.init(rng, jnp.ones((1, 1)))
+    params = flax_single_layer.init(rng, jnp.ones((1, 1)))
     return params
 
 

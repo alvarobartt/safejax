@@ -9,7 +9,7 @@ from safejax.utils import ParamsDictLike
 @pytest.mark.parametrize(
     "params",
     [
-        pytest.lazy_fixture("single_layer_params"),
+        pytest.lazy_fixture("flax_single_layer_params"),
         pytest.lazy_fixture("flax_resnet50_params"),
         pytest.lazy_fixture("objax_resnet50_params"),
         pytest.lazy_fixture("haiku_resnet50_params"),
@@ -24,7 +24,7 @@ def test_serialize(params: ParamsDictLike) -> None:
 @pytest.mark.parametrize(
     "params",
     [
-        pytest.lazy_fixture("single_layer_params"),
+        pytest.lazy_fixture("flax_single_layer_params"),
         pytest.lazy_fixture("flax_resnet50_params"),
         pytest.lazy_fixture("objax_resnet50_params"),
         pytest.lazy_fixture("haiku_resnet50_params"),
