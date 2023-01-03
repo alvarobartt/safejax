@@ -1,7 +1,7 @@
 import os
 import tempfile
 from pathlib import Path
-from typing import Union
+from typing import Dict, Union
 
 from fsspec import AbstractFileSystem
 from safetensors.flax import save, save_file
@@ -12,6 +12,7 @@ from safejax.utils import flatten_dict
 
 def serialize(
     params: ParamsDictLike,
+    metadata: Union[None, Dict[str, str]] = None,
     filename: Union[PathLike, None] = None,
     fs: Union[AbstractFileSystem, None] = None,
 ) -> Union[bytes, PathLike]:
@@ -23,6 +24,7 @@ def serialize(
 
     Args:
         params: A `FrozenDict`, a `Dict` or a `VarCollection` containing the model params.
+        metadata: A `Dict` containing the metadata to be saved along with the model params.
         filename: The path to the file where the model params will be saved.
         fs: The filesystem to use to save the model params. Defaults to `None`.
 
@@ -31,6 +33,17 @@ def serialize(
     """
     params = flatten_dict(params=params)
 
+    if metadata and any(
+        not isinstance(key, str) or not isinstance(value, str)
+        for key, value in metadata.items()
+    ):
+        raise ValueError(
+            "If `metadata` is provided (not `None`), it must be a `Dict[str, str]`"
+            " object. From the `safetensors` documentation: 'Optional text only"
+            " metadata you might want to save in your header. For instance it can be"
+            " useful to specify more about the underlying tensors. This is purely"
+            " informative and does not affect tensor loading.'"
+        )
     if filename:
         if not isinstance(filename, (str, Path)):
             raise ValueError(
@@ -47,7 +60,7 @@ def serialize(
                 mode="wb", suffix=".safetensors", delete=False
             )
             try:
-                temp_filename.write(save(tensors=params))
+                temp_filename.write(save(tensors=params, metadata=metadata))
             finally:
                 temp_filename.close()
                 fs.put_file(lpath=temp_filename.name, rpath=filename)
@@ -61,7 +74,7 @@ def serialize(
                 raise ValueError(
                     f"`filename` must be a valid file path, not {filename}."
                 )
-            save_file(tensors=params, filename=filename.as_posix())
+            save_file(tensors=params, filename=filename.as_posix(), metadata=metadata)
         return filename
 
-    return save(tensors=params)
+    return save(tensors=params, metadata=metadata)
