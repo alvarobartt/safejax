@@ -53,7 +53,10 @@ def serialize(
                 fs.put_file(lpath=temp_filename.name, rpath=filename)
                 os.remove(temp_filename.name)
         else:
-            filename = filename if isinstance(filename, Path) else Path(filename)
+            if fs and fs.protocol == "file":
+                filename = Path(fs._strip_protocol(filename))
+            else:
+                filename = filename if isinstance(filename, Path) else Path(filename)
             if not filename.exists or not filename.is_file:
                 raise ValueError(
                     f"`filename` must be a valid file path, not {filename}."
