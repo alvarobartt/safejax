@@ -1,5 +1,6 @@
 import os
 import tempfile
+import warnings
 from pathlib import Path
 from typing import Dict, Union
 
@@ -33,16 +34,25 @@ def serialize(
     """
     params = flatten_dict(params=params)
 
-    if metadata and any(
-        not isinstance(key, str) or not isinstance(value, str)
-        for key, value in metadata.items()
-    ):
-        raise ValueError(
-            "If `metadata` is provided (not `None`), it must be a `Dict[str, str]`"
-            " object. From the `safetensors` documentation: 'Optional text only"
-            " metadata you might want to save in your header. For instance it can be"
-            " useful to specify more about the underlying tensors. This is purely"
-            " informative and does not affect tensor loading.'"
+    if metadata:
+        if any(
+            not isinstance(key, str) or not isinstance(value, str)
+            for key, value in metadata.items()
+        ):
+            raise ValueError(
+                "If `metadata` is provided (not `None`), it must be a `Dict[str, str]`"
+                " object. From the `safetensors` documentation: 'Optional text only"
+                " metadata you might want to save in your header. For instance it can"
+                " be useful to specify more about the underlying tensors. This is"
+                " purely informative and does not affect tensor loading.'"
+            )
+        warnings.warn(
+            "`metadata` param can be provided, but will be ignored when loading the"
+            " params back. The only way to load the metadata as well as the model"
+            " params is to use `safetensors.safe_open`, and access the metadata with"
+            " `.metadata()`, otherwise, it will be ignored when calling"
+            " `safetensors.load` or `safetensors.load_file`. More information at"
+            " https://github.com/huggingface/safetensors/issues/147."
         )
     if filename:
         if not isinstance(filename, (str, Path)):
