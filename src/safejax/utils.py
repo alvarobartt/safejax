@@ -1,3 +1,4 @@
+import warnings
 from typing import Any, Dict, Union
 
 import numpy as np
@@ -73,6 +74,15 @@ def unflatten_dict(params: Dict[str, Any]) -> Dict[str, Any]:
     Unflatten a `Dict` where the keys should be expanded using the `.` character
     as a separator.
 
+    Note:
+        If the params where serialized from a `VarCollection` object, then the
+        `objax.variable` types are included in the keys, and since this function
+        just unflattens the dictionary without `objax.variable` casting, those
+        variables will be ignored and unflattened normally. Anyway, when deserializing
+        `objax` models you should use `safejax.objax.deserialize` or just use the
+        function params in `safejax.deserialize`: `requires_unflattening=False` and
+        `to_var_collection=True`.
+
     Reference at https://stackoverflow.com/a/63545677.
 
     Args:
@@ -82,8 +92,26 @@ def unflatten_dict(params: Dict[str, Any]) -> Dict[str, Any]:
         An unflattened `Dict` where the keys are expanded using the `.` character.
     """
     unflattened_params = {}
+    warned_user = False
     for key, value in params.items():
         unflattened_params_tmp = unflattened_params
+        if not warned_user and OBJAX_VARIABLE_SEPARATOR in key:
+            warnings.warn(
+                "The params were serialized from a `VarCollection` object, "
+                "so the `objax.variable` types are included in the keys, "
+                "and since this function just unflattens the dictionary "
+                "without `objax.variable` casting, those variables will be "
+                "ignored and unflattened normally. Anyway, when deserializing "
+                "`objax` models you should use `safejax.objax.deserialize` "
+                "or just use the function params in `safejax.deserialize`: "
+                "`requires_unflattening=False` and `to_var_collection=True`."
+            )
+            warned_user = True
+        key = (
+            key.split(OBJAX_VARIABLE_SEPARATOR)[0]
+            if OBJAX_VARIABLE_SEPARATOR in key
+            else key
+        )
         subkeys = key.split(".")
         for subkey in subkeys[:-1]:
             unflattened_params_tmp = unflattened_params_tmp.setdefault(subkey, {})
