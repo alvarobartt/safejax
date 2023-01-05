@@ -19,7 +19,7 @@ from safejax.utils import flatten_dict
 @pytest.mark.parametrize(
     "params",
     [
-        pytest.lazy_fixture("single_layer_params"),
+        pytest.lazy_fixture("flax_single_layer_params"),
         pytest.lazy_fixture("flax_resnet50_params"),
     ],
 )
@@ -35,7 +35,7 @@ def test_partial_deserialize(params: FlaxParams) -> None:
 @pytest.mark.parametrize(
     "params",
     [
-        pytest.lazy_fixture("single_layer_params"),
+        pytest.lazy_fixture("flax_single_layer_params"),
         pytest.lazy_fixture("flax_resnet50_params"),
     ],
 )
@@ -54,7 +54,7 @@ def test_partial_deserialize_from_file(
 @pytest.mark.parametrize(
     "params",
     [
-        pytest.lazy_fixture("single_layer_params"),
+        pytest.lazy_fixture("flax_single_layer_params"),
         pytest.lazy_fixture("flax_resnet50_params"),
     ],
 )
@@ -96,7 +96,7 @@ def test_safejax_and_msgpack(
 @pytest.mark.parametrize(
     "params",
     [
-        pytest.lazy_fixture("single_layer_params"),
+        pytest.lazy_fixture("flax_single_layer_params"),
         pytest.lazy_fixture("flax_resnet50_params"),
     ],
 )
@@ -136,8 +136,8 @@ def test_safejax_and_msgpack_bytes(params: FlaxParams) -> None:
 @pytest.mark.parametrize(
     "params",
     [
-        pytest.lazy_fixture("single_layer_params"),
-        # pytest.lazy_fixture("flax_resnet50_params"),
+        pytest.lazy_fixture("flax_single_layer_params"),
+        pytest.lazy_fixture("flax_resnet50_params"),
     ],
 )
 def test_safejax_and_state_dict(params: FlaxParams) -> None:

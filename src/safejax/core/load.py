@@ -2,6 +2,7 @@ from pathlib import Path
 from typing import Union
 
 from flax.core.frozen_dict import freeze
+from fsspec import AbstractFileSystem
 from objax.variable import VarCollection
 from safetensors.flax import load, load_file
 
@@ -11,6 +12,7 @@ from safejax.utils import unflatten_dict
 
 def deserialize(
     path_or_buf: Union[PathLike, bytes],
+    fs: Union[AbstractFileSystem, None] = None,
     freeze_dict: bool = False,
     requires_unflattening: bool = True,
     to_var_collection: bool = False,
@@ -30,6 +32,7 @@ def deserialize(
     Args:
         path_or_buf:
             A `bytes` object or a file path containing the serialized model params.
+        fs: The filesystem to use to load the model params. Defaults to `None`.
         freeze_dict:
             Whether to freeze the output `Dict` to be a `FrozenDict` or not. Defaults to `False`.
         requires_unflattening:
@@ -43,12 +46,26 @@ def deserialize(
     if isinstance(path_or_buf, bytes):
         decoded_params = load(data=path_or_buf)
     elif isinstance(path_or_buf, (str, Path)):
-        filename = path_or_buf if isinstance(path_or_buf, Path) else Path(path_or_buf)
-        if not filename.exists or not filename.is_file:
-            raise ValueError(
-                f"`path_or_buf` must be a valid file path, not {path_or_buf}."
-            )
-        decoded_params = load_file(filename=filename.as_posix())
+        if fs and fs.protocol != "file":
+            if not isinstance(fs, AbstractFileSystem):
+                raise ValueError(
+                    "`fs` must be a `fsspec.AbstractFileSystem` object or `None`,"
+                    f" not {type(fs)}."
+                )
+            with fs.open(path_or_buf, "rb") as f:
+                decoded_params = load(data=f.read())
+        else:
+            if fs and fs.protocol == "file":
+                filename = Path(fs._strip_protocol(path_or_buf))
+            else:
+                filename = (
+                    path_or_buf if isinstance(path_or_buf, Path) else Path(path_or_buf)
+                )
+            if not filename.exists or not filename.is_file:
+                raise ValueError(
+                    f"`path_or_buf` must be a valid file path, not {path_or_buf}."
+                )
+            decoded_params = load_file(filename=filename.as_posix())
     else:
         raise ValueError(
             "`path_or_buf` must be a `bytes` object or a file path (`str` or"
