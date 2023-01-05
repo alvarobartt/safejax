@@ -5,12 +5,13 @@ from flax.core.frozen_dict import FrozenDict
 from jax import numpy as jnp
 from objax.variable import BaseState, BaseVar
 
-from safejax.typing import ParamsDictLike
+OBJAX_VARIABLE_SEPARATOR = "::"
 
 
 def flatten_dict(
     params: ParamsDictLike,
     key_prefix: Union[str, None] = None,
+    include_objax_variables: bool = False,
 ) -> Union[Dict[str, np.ndarray], Dict[str, jnp.DeviceArray]]:
     """
     Flatten a `Dict`, `FrozenDict`, or `VarCollection`, for more detailed information on
@@ -26,6 +27,9 @@ def flatten_dict(
     Args:
         params: A `Dict`, `FrozenDict`, or `VarCollection` with the params to flatten.
         key_prefix: A prefix to prepend to the keys of the flattened dictionary.
+        include_objax_variables:
+            A boolean indicating whether to include the `objax.variable` types in
+            the keys of the flattened dictionary.
 
     Returns:
         A `Dict` containing the flattened params as level-1 key-value pairs.
@@ -34,6 +38,8 @@ def flatten_dict(
     for key, value in params.items():
         key = f"{key_prefix}.{key}" if key_prefix else key
         if isinstance(value, (BaseVar, BaseState)):
+            if include_objax_variables:
+                key = f"{key}{OBJAX_VARIABLE_SEPARATOR}{type(value).__name__}"
             value = value.value
         if isinstance(value, (jnp.DeviceArray, np.ndarray)):
             flattened_params[key] = value
@@ -43,6 +49,7 @@ def flatten_dict(
                 flatten_dict(
                     params=value,
                     key_prefix=key,
+                    include_objax_variables=include_objax_variables,
                 )
             )
     return flattened_params
