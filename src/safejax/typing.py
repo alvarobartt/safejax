@@ -9,7 +9,8 @@ PathLike = Union[str, Path]
 
 JaxDeviceArrayDict = Dict[str, jnp.DeviceArray]
 HaikuParams = Dict[str, JaxDeviceArrayDict]
-ObjaxParams = Union[VarCollection, Dict[str, Union[BaseVar, StateVar]]]
+ObjaxDict = Dict[str, Union[BaseVar, StateVar]]
+ObjaxParams = Union[VarCollection, ObjaxDict]
 FlaxParams = Union[Dict[str, Union[Dict, JaxDeviceArrayDict]], FrozenDict]
 
 ParamsDictLike = Union[JaxDeviceArrayDict, HaikuParams, ObjaxParams, FlaxParams]
