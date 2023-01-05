@@ -10,6 +10,8 @@ from safejax.core.load import deserialize
 from safejax.core.save import serialize
 from safejax.typing import ParamsDictLike
 
+from .utils import assert_over_trees
+
 
 @pytest.mark.parametrize(
     "params, deserialize_kwargs, expected_output_type",
@@ -45,6 +47,8 @@ def test_deserialize(
     assert id(decoded_params) != id(params)
     assert decoded_params.keys() == params.keys()
 
+    assert_over_trees(params=params, decoded_params=decoded_params)
+
 
 @pytest.mark.parametrize(
     "params, deserialize_kwargs, expected_output_type",
@@ -70,7 +74,7 @@ def test_deserialize(
 )
 @pytest.mark.usefixtures("safetensors_file")
 def test_deserialize_from_file(
-    params: FrozenDict,
+    params: ParamsDictLike,
     deserialize_kwargs: Dict[str, Any],
     expected_output_type: Union[dict, FrozenDict, VarCollection],
     safetensors_file: Path,
@@ -81,6 +85,8 @@ def test_deserialize_from_file(
     assert len(decoded_params) > 0
     assert id(decoded_params) != id(params)
     assert decoded_params.keys() == params.keys()
+
+    assert_over_trees(params=params, decoded_params=decoded_params)
 
 
 @pytest.mark.parametrize(
@@ -107,7 +113,7 @@ def test_deserialize_from_file(
 )
 @pytest.mark.usefixtures("safetensors_file", "fs")
 def test_deserialize_from_file_in_fs(
-    params: FrozenDict,
+    params: ParamsDictLike,
     deserialize_kwargs: Dict[str, Any],
     expected_output_type: Union[dict, FrozenDict, VarCollection],
     safetensors_file: Path,
@@ -121,3 +127,5 @@ def test_deserialize_from_file_in_fs(
     assert len(decoded_params) > 0
     assert id(decoded_params) != id(params)
     assert decoded_params.keys() == params.keys()
+
+    assert_over_trees(params=params, decoded_params=decoded_params)

@@ -5,6 +5,8 @@ import pytest
 from safejax.haiku import deserialize, serialize
 from safejax.typing import HaikuParams
 
+from .utils import assert_over_trees
+
 
 @pytest.mark.parametrize(
     "params",
@@ -22,6 +24,8 @@ def test_serialize_and_deserialize(params: HaikuParams) -> None:
     assert len(decoded_params) > 0
     assert id(decoded_params) != id(params)
     assert decoded_params.keys() == params.keys()
+
+    assert_over_trees(params=params, decoded_params=decoded_params)
 
 
 @pytest.mark.parametrize(
@@ -43,3 +47,5 @@ def test_serialize_and_deserialize_from_file(
     assert len(decoded_params) > 0
     assert id(decoded_params) != id(params)
     assert decoded_params.keys() == params.keys()
+
+    assert_over_trees(params=params, decoded_params=decoded_params)
