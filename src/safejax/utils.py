@@ -3,8 +3,18 @@ from typing import Any, Dict, Union
 import numpy as np
 from flax.core.frozen_dict import FrozenDict
 from jax import numpy as jnp
-from objax.variable import BaseState, BaseVar
+from objax.variable import BaseState, BaseVar, RandomState, StateVar, TrainRef, TrainVar
 
+from safejax.typing import JaxDeviceArrayDict, ObjaxDict, ParamsDictLike
+
+OBJAX_VARIABLES = {
+    "BaseVar": BaseVar,
+    "BaseState": BaseState,
+    "RandomState": RandomState,
+    "TrainRef": TrainRef,
+    "StateVar": StateVar,
+    "TrainVar": TrainVar,
+}
 OBJAX_VARIABLE_SEPARATOR = "::"
 
 
@@ -79,3 +89,39 @@ def unflatten_dict(params: Dict[str, Any]) -> Dict[str, Any]:
             unflattened_params_tmp = unflattened_params_tmp.setdefault(subkey, {})
         unflattened_params_tmp[subkeys[-1]] = value
     return unflattened_params
+
+
+def cast_objax_variables(
+    params: Dict[str, jnp.DeviceArray]
+) -> Union[JaxDeviceArrayDict, ObjaxDict]:
+    """
+    Cast the `jnp.DeviceArray` to their corresponding `objax.variable` types.
+
+    Note:
+        This function may return the same `params` if no `objax.variable` types
+        are found in the keys.
+
+    Args:
+        params: A `Dict` containing the params to cast.
+
+    Raises:
+        ValueError: If the params were not serialized from a `VarCollection` object.
+
+    Returns:
+        A `Dict` containing the keys without the variable name, and the values
+        with the `objax.variable` objects with `.value` assigned from the
+        `jnp.DeviceArray`.
+    """
+    casted_params = {}
+    for key, value in params.items():
+        if OBJAX_VARIABLE_SEPARATOR not in key:
+            raise ValueError(
+                "The params were not serialized from a `VarCollection` object, since"
+                " the type has not been included as part of the key using"
+                f" `{OBJAX_VARIABLE_SEPARATOR}` as separator at the end of the key."
+                " Returning the same params without casting the `jnp.DeviceArray` to"
+                " `objax.variable` types."
+            )
+        key, objax_var_type = key.split(OBJAX_VARIABLE_SEPARATOR)
+        casted_params[key] = OBJAX_VARIABLES[objax_var_type](value)
+    return casted_params
