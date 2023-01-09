@@ -1,3 +1,4 @@
+import warnings
 from pathlib import Path
 from typing import Union
 
@@ -7,7 +8,7 @@ from objax.variable import VarCollection
 from safetensors.flax import load, load_file
 
 from safejax.typing import ParamsDictLike, PathLike
-from safejax.utils import unflatten_dict
+from safejax.utils import cast_objax_variables, unflatten_dict
 
 
 def deserialize(
@@ -71,10 +72,14 @@ def deserialize(
             "`path_or_buf` must be a `bytes` object or a file path (`str` or"
             f" `pathlib.Path` object), not {type(path_or_buf)}."
         )
+    if to_var_collection:
+        try:
+            return VarCollection(cast_objax_variables(params=decoded_params))
+        except ValueError as e:
+            warnings.warn(e)
+        return decoded_params
     if requires_unflattening:
         decoded_params = unflatten_dict(params=decoded_params)
     if freeze_dict:
         return freeze(decoded_params)
-    if to_var_collection:
-        return VarCollection(decoded_params)
     return decoded_params

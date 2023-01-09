@@ -14,6 +14,7 @@ from safejax.utils import flatten_dict
 def serialize(
     params: ParamsDictLike,
     metadata: Union[None, Dict[str, str]] = None,
+    include_objax_variables: bool = False,
     filename: Union[PathLike, None] = None,
     fs: Union[AbstractFileSystem, None] = None,
 ) -> Union[bytes, PathLike]:
@@ -26,13 +27,16 @@ def serialize(
     Args:
         params: A `FrozenDict`, a `Dict` or a `VarCollection` containing the model params.
         metadata: A `Dict` containing the metadata to be saved along with the model params.
+        include_objax_variables: Whether to include `objax.Variable` objects in the serialized model params.
         filename: The path to the file where the model params will be saved.
         fs: The filesystem to use to save the model params. Defaults to `None`.
 
     Returns:
         The serialized model params as a `bytes` object or the path to the file where the model params were saved.
     """
-    params = flatten_dict(params=params)
+    params = flatten_dict(
+        params=params, include_objax_variables=include_objax_variables
+    )
 
     if metadata:
         if any(
