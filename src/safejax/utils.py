@@ -6,7 +6,7 @@ from flax.core.frozen_dict import FrozenDict
 from jax import numpy as jnp
 from objax.variable import BaseState, BaseVar, RandomState, StateVar, TrainRef, TrainVar
 
-from safejax.typing import JaxDeviceArrayDict, ObjaxDict, ParamsDictLike
+from safejax.typing import JaxDeviceArrayDict, NumpyArrayDict, ObjaxDict, ParamsDictLike
 
 OBJAX_VARIABLES = {
     "BaseVar": BaseVar,
@@ -23,7 +23,7 @@ def flatten_dict(
     params: ParamsDictLike,
     key_prefix: Union[str, None] = None,
     include_objax_variables: bool = False,
-) -> Union[Dict[str, np.ndarray], Dict[str, jnp.DeviceArray]]:
+) -> Union[NumpyArrayDict, JaxDeviceArrayDict]:
     """
     Flatten a `Dict`, `FrozenDict`, or `VarCollection`, for more detailed information on
     the supported input types check `safejax.typing.ParamsDictLike`.
@@ -66,10 +66,7 @@ def flatten_dict(
     return flattened_params
 
 
-# Note that this function has a less restrictive type hint than the `flatten_dict` function.
-# This is because the `unflatten_dict` function is generic, and it can be used to unflatten
-# any `Dict` where the keys are expanded using the `.` character as a separator.
-def unflatten_dict(params: Dict[str, Any]) -> Dict[str, Any]:
+def unflatten_dict(params: Union[NumpyArrayDict, JaxDeviceArrayDict]) -> Dict[str, Any]:
     """
     Unflatten a `Dict` where the keys should be expanded using the `.` character
     as a separator.
@@ -120,7 +117,7 @@ def unflatten_dict(params: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def cast_objax_variables(
-    params: Dict[str, jnp.DeviceArray]
+    params: JaxDeviceArrayDict,
 ) -> Union[JaxDeviceArrayDict, ObjaxDict]:
     """
     Cast the `jnp.DeviceArray` to their corresponding `objax.variable` types.

@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Dict
 
 import fsspec
 import haiku as hk
@@ -84,6 +85,13 @@ def objax_resnet50() -> objax.nn.Sequential:
 @pytest.fixture
 def objax_resnet50_params(objax_resnet50: objax.nn.Sequential) -> VarCollection:
     return objax_resnet50.vars()
+
+
+@pytest.fixture
+def metadata() -> Dict[str, str]:
+    return {
+        "test": "test",
+    }
 
 
 @pytest.fixture(scope="session")

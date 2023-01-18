@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Dict
 
 import pytest
 from fsspec.spec import AbstractFileSystem
@@ -20,6 +21,25 @@ def test_serialize(params: ParamsDictLike) -> None:
     encoded_params = serialize(params=params)
     assert isinstance(encoded_params, bytes)
     assert len(encoded_params) > 0
+
+
+@pytest.mark.parametrize(
+    "params",
+    [
+        pytest.lazy_fixture("flax_single_layer_params"),
+        pytest.lazy_fixture("flax_resnet50_params"),
+        pytest.lazy_fixture("objax_resnet50_params"),
+        pytest.lazy_fixture("haiku_resnet50_params"),
+    ],
+)
+@pytest.mark.usefixtures("metadata")
+def test_serialize_with_metadata(
+    params: ParamsDictLike, metadata: Dict[str, str]
+) -> None:
+    encoded_params = serialize(params=params, metadata=metadata)
+    assert isinstance(encoded_params, bytes)
+    assert len(encoded_params) > 0
+    assert encoded_params.__contains__(b"metadata")
 
 
 @pytest.mark.parametrize(
