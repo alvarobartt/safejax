@@ -99,6 +99,27 @@ def test_deserialize_from_file(
     assert_over_trees(params=params, decoded_params=decoded_params)
 
 
+@pytest.mark.usefixtures("flax_resnet50_params", "safetensors_file", "metadata")
+def test_deserialize_from_file_with_metadata(
+    flax_resnet50_params: ParamsDictLike,
+    safetensors_file: Path,
+    metadata: Dict[str, str],
+) -> None:
+    safetensors_file = serialize(
+        params=flax_resnet50_params, filename=safetensors_file, metadata=metadata
+    )
+    decoded_params, metadata = deserialize(path_or_buf=safetensors_file)
+    assert isinstance(decoded_params, dict)
+    assert len(decoded_params) > 0
+    assert id(decoded_params) != id(flax_resnet50_params)
+    assert decoded_params.keys() == flax_resnet50_params.keys()
+    assert metadata is not None
+    assert isinstance(metadata, dict)
+    assert len(metadata) > 0
+
+    assert_over_trees(params=flax_resnet50_params, decoded_params=decoded_params)
+
+
 @pytest.mark.parametrize(
     "params, serialize_kwargs, deserialize_kwargs, expected_output_type",
     [
