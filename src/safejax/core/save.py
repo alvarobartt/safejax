@@ -50,14 +50,15 @@ def serialize(
                 " be useful to specify more about the underlying tensors. This is"
                 " purely informative and does not affect tensor loading.'"
             )
-        warnings.warn(
-            "`metadata` param can be provided, but will be ignored when loading the"
-            " params back. The only way to load the metadata as well as the model"
-            " params is to use `safetensors.safe_open`, and access the metadata with"
-            " `.metadata()`, otherwise, it will be ignored when calling"
-            " `safetensors.load` or `safetensors.load_file`. More information at"
-            " https://github.com/huggingface/safetensors/issues/147."
-        )
+        if not filename:
+            warnings.warn(
+                "`metadata` param will be ignored when trying to `deserialize` from"
+                " bytes, if you want to save the `metadata` to be loaded later, you can"
+                " set the `filename` param to dump the `metadata` along with the model"
+                " params in a file, either to be loaded back using `deserialize` from"
+                " `path_or_buf` or using `safetensors.safe_open`. More information at"
+                " https://github.com/huggingface/safetensors/issues/147."
+            )
     if filename:
         if not isinstance(filename, (str, Path)):
             raise ValueError(

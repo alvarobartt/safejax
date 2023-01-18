@@ -1,11 +1,12 @@
 import warnings
 from pathlib import Path
-from typing import Union
+from typing import Dict, Tuple, Union
 
 from flax.core.frozen_dict import freeze
 from fsspec import AbstractFileSystem
 from objax.variable import VarCollection
-from safetensors.flax import load, load_file
+from safetensors import safe_open
+from safetensors.flax import load
 
 from safejax.typing import ParamsDictLike, PathLike
 from safejax.utils import cast_objax_variables, unflatten_dict
@@ -17,7 +18,7 @@ def deserialize(
     freeze_dict: bool = False,
     requires_unflattening: bool = True,
     to_var_collection: bool = False,
-) -> ParamsDictLike:
+) -> Union[ParamsDictLike, Tuple[Dict[str, str], ParamsDictLike]]:
     """
     Deserialize JAX, Flax, Haiku, or Objax model params from either a `bytes` object or a file path,
     stored using `safetensors.flax.save_file` or directly saved using `safejax.save.serialize` with
@@ -44,6 +45,7 @@ def deserialize(
     Returns:
         A `Dict[str, jnp.DeviceArray]`, `FrozenDict`, or `VarCollection` containing the model params.
     """
+    metadata = {}
     if isinstance(path_or_buf, bytes):
         decoded_params = load(data=path_or_buf)
     elif isinstance(path_or_buf, (str, Path)):
@@ -66,7 +68,11 @@ def deserialize(
                 raise ValueError(
                     f"`path_or_buf` must be a valid file path, not {path_or_buf}."
                 )
-            decoded_params = load_file(filename=filename.as_posix())
+            decoded_params = {}
+            with safe_open(filename.as_posix(), framework="jax") as f:
+                metadata = f.metadata()
+                for k in f.keys():
+                    decoded_params[k] = f.get_tensor(k)
     else:
         raise ValueError(
             "`path_or_buf` must be a `bytes` object or a file path (`str` or"
@@ -82,4 +88,6 @@ def deserialize(
         decoded_params = unflatten_dict(params=decoded_params)
     if freeze_dict:
         return freeze(decoded_params)
+    if metadata and len(metadata) > 0:
+        return metadata, decoded_params
     return decoded_params
