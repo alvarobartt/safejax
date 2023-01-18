@@ -18,7 +18,7 @@ def deserialize(
     freeze_dict: bool = False,
     requires_unflattening: bool = True,
     to_var_collection: bool = False,
-) -> Union[ParamsDictLike, Tuple[Dict[str, str], ParamsDictLike]]:
+) -> Union[ParamsDictLike, Tuple[ParamsDictLike, Dict[str, str]]]:
     """
     Deserialize JAX, Flax, Haiku, or Objax model params from either a `bytes` object or a file path,
     stored using `safetensors.flax.save_file` or directly saved using `safejax.save.serialize` with
@@ -43,7 +43,9 @@ def deserialize(
             Whether to convert the output `Dict` to a `VarCollection` or not. Defaults to `False`.
 
     Returns:
-        A `Dict[str, jnp.DeviceArray]`, `FrozenDict`, or `VarCollection` containing the model params.
+        A `Dict[str, jnp.DeviceArray]`, `FrozenDict`, or `VarCollection` containing the model params,
+        or in case `path_or_buf` is a filename and `metadata` is not empty, a tuple containing the
+        model params and the metadata (in that order).
     """
     metadata = {}
     if isinstance(path_or_buf, bytes):
@@ -89,5 +91,5 @@ def deserialize(
     if freeze_dict:
         return freeze(decoded_params)
     if metadata and len(metadata) > 0:
-        return metadata, decoded_params
+        return decoded_params, metadata
     return decoded_params
