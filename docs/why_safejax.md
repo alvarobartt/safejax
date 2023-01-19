@@ -21,11 +21,8 @@ some variables inheriting from `BaseVar` which is another custom `objax` type.
 store the tensors in memory, it can be dumped either into `bytes` in `MessagePack`
 format or as a `state_dict`.
 
-Of all those, `flax` is the only framework that defines its custom functions to
-serialize and deserialize the model params under `flax.serialization`.But `flax` still
-uses `pickle` as the format for storing the tensors, and there are no plans from HuggingFace
-to extend `safetensors` to support anything more than tensors e.g. `FrozenDict`s, see their
-response at [huggingface/safetensors/discussions/138](https://github.com/huggingface/safetensors/discussions/138).
+There are no plans from HuggingFace to extend `safetensors` to support anything more than tensors
+e.g. `FrozenDict`s, see their response at [huggingface/safetensors/discussions/138](https://github.com/huggingface/safetensors/discussions/138).
 
 So the motivation to create `safejax` is to easily provide a way to serialize `FrozenDict`s
 using `safetensors` as the tensor storage format instead of `pickle`, as well as to provide
