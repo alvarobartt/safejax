@@ -9,44 +9,38 @@ absl-py==1.3.0
     #   chex
     #   dm-haiku
     #   optax
-    #   orbax
+    #   orbax-checkpoint
     #   tensorboard
-attrs==22.2.0
-    # via pytest
 babel==2.11.0
     # via mkdocs-git-revision-date-localized-plugin
 cached-property==1.5.2
-    # via orbax
+    # via orbax-checkpoint
 cachetools==5.2.0
     # via google-auth
 certifi==2022.12.7
     # via requests
 charset-normalizer==2.1.1
     # via requests
-chex==0.1.5
-    # via optax
+chex==0.1.7
+    # via
+    #   optax
+    #   safejax (pyproject.toml)
 click==8.1.3
     # via mkdocs
 colorama==0.4.6
     # via griffe
 commonmark==0.9.1
     # via rich
-contourpy==1.0.6
-    # via matplotlib
-cycler==0.11.0
-    # via matplotlib
 dm-haiku==0.0.9
     # via safejax (pyproject.toml)
 dm-tree==0.1.8
     # via chex
 etils==0.9.0
-    # via orbax
-flax==0.6.3
-    # via
-    #   orbax
-    #   safejax (pyproject.toml)
-fonttools==4.38.0
-    # via matplotlib
+    # via orbax-checkpoint
+flax==0.7.2
+    # via safejax (pyproject.toml)
+fsspec==2022.11.0
+    # via safejax (pyproject.toml)
 ghp-import==2.1.0
     # via mkdocs
 gitdb==4.0.10
@@ -65,28 +59,27 @@ grpcio==1.51.1
     # via tensorboard
 idna==3.4
     # via requests
-importlib-metadata==5.2.0
+importlib-metadata==6.8.0
     # via
+    #   jax
     #   markdown
     #   mkdocs
 importlib-resources==5.10.1
-    # via orbax
-iniconfig==1.1.1
-    # via pytest
-jax==0.3.25
+    # via orbax-checkpoint
+jax==0.4.14
     # via
     #   chex
     #   flax
     #   objax
     #   optax
-    #   orbax
+    #   orbax-checkpoint
     #   safejax (pyproject.toml)
-jaxlib==0.3.25
+jaxlib==0.4.14
     # via
     #   chex
     #   objax
     #   optax
-    #   orbax
+    #   orbax-checkpoint
     #   safejax (pyproject.toml)
 jinja2==3.1.2
     # via
@@ -95,8 +88,6 @@ jinja2==3.1.2
     #   mkdocstrings
 jmp==0.0.2
     # via dm-haiku
-kiwisolver==1.4.4
-    # via matplotlib
 markdown==3.3.7
     # via
     #   mkdocs
@@ -110,8 +101,6 @@ markupsafe==2.1.1
     #   jinja2
     #   mkdocstrings
     #   werkzeug
-matplotlib==3.6.2
-    # via flax
 mergedeep==1.3.4
     # via mkdocs
 mkdocs==1.4.2
@@ -135,52 +124,50 @@ mkdocstrings[python]==0.19.1
     #   safejax (pyproject.toml)
 mkdocstrings-python==0.8.2
     # via mkdocstrings
+ml-dtypes==0.2.0
+    # via
+    #   jax
+    #   jaxlib
 msgpack==1.0.4
-    # via flax
+    # via
+    #   flax
+    #   orbax-checkpoint
+nest-asyncio==1.5.7
+    # via orbax-checkpoint
 numpy==1.24.1
     # via
     #   chex
-    #   contourpy
     #   dm-haiku
     #   flax
     #   jax
     #   jaxlib
     #   jmp
-    #   matplotlib
+    #   ml-dtypes
     #   objax
     #   opt-einsum
     #   optax
-    #   orbax
+    #   orbax-checkpoint
     #   scipy
     #   tensorboard
     #   tensorstore
 oauthlib==3.2.2
     # via requests-oauthlib
-objax==1.6.0
+objax==1.7.0
     # via safejax (pyproject.toml)
 opt-einsum==3.3.0
     # via jax
 optax==0.1.4
     # via flax
-orbax==0.0.23
+orbax-checkpoint==0.1.7
     # via flax
 packaging==22.0
-    # via
-    #   matplotlib
-    #   mkdocs
-    #   pytest
+    # via mkdocs
 parameterized==0.8.1
     # via objax
 pillow==9.3.0
-    # via
-    #   matplotlib
-    #   objax
-pluggy==1.0.0
-    # via pytest
+    # via objax
 protobuf==3.20.3
     # via tensorboard
-py==1.11.0
-    # via pytest
 pyasn1==0.4.8
     # via
     #   pyasn1-modules
@@ -195,21 +182,15 @@ pymdown-extensions==9.9
     # via
     #   mkdocs-material
     #   mkdocstrings
-pyparsing==3.0.9
-    # via matplotlib
-pytest==7.1.3
-    # via orbax
 python-dateutil==2.8.2
-    # via
-    #   ghp-import
-    #   matplotlib
+    # via ghp-import
 pytz==2022.7
     # via babel
 pyyaml==6.0
     # via
     #   flax
     #   mkdocs
-    #   orbax
+    #   orbax-checkpoint
     #   pyyaml-env-tag
 pyyaml-env-tag==0.1
     # via mkdocs
@@ -248,16 +229,15 @@ tensorboard-plugin-wit==1.8.1
 tensorstore==0.1.28
     # via
     #   flax
-    #   orbax
-tomli==2.0.1
-    # via pytest
+    #   orbax-checkpoint
 toolz==0.12.0
     # via chex
 typing-extensions==4.4.0
     # via
+    #   chex
     #   flax
-    #   jax
     #   optax
+    #   orbax-checkpoint
 urllib3==1.26.13
     # via requests
 watchdog==2.2.0
@@ -266,7 +246,7 @@ werkzeug==2.2.2
     # via tensorboard
 wheel==0.38.4
     # via tensorboard
-zipp==3.11.0
+zipp==3.16.2
     # via
     #   importlib-metadata
     #   importlib-resources

@@ -18,10 +18,11 @@ classifiers = [
   "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 dependencies = [
-  "jaxlib~=0.3.25",
-  "jax~=0.3.25",
-  "objax~=1.6.0",
-  "flax~=0.6.2",
+  "jaxlib~=0.4.14",
+  "jax~=0.4.14",
+  "objax~=1.7.0",
+  "flax~=0.7.2",
+  "chex>=0.1.6",
   "dm-haiku~=0.0.9",
   "safetensors~=0.2.5",
   "fsspec~=2022.11.0",
